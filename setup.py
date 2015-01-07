@@ -13,7 +13,7 @@ requirements = [
 setup(
     name='django-reviews',
     version='1.0',
-    description='Django abstract base classes for creating a reviews application',
+    description='A simple to use framework for user submitted reviews of objects.',
     author='Austin Heiman',
     author_email='atheimanksu@gmail.com',
     url='https://github.com/atheiman/django-reviews',
