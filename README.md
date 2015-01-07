@@ -21,9 +21,9 @@ Simple abstract base classes to make implementing a review system easy.
         name = models.CharField(max_length=40)
         # ...
         reviews = models.ManyToManyField(
-            'User',                                         # Reviews are tied to a User instance
-            through='ProductReview',                        # Subclass of reviews.models.Review
-            related_name='product_reviews',                 # related_name available from User instance
+            'User',                            # Reviews are tied to a User instance
+            through='ProductReview',           # Subclass of reviews.models.Review
+            related_name='product_reviews',    # related_name available from User instance
         )
         # ...
 
@@ -31,7 +31,8 @@ Simple abstract base classes to make implementing a review system easy.
         product = models.ForeignKey('Product')
 
         def __unicode__(self):
-            return "product: {p}, score: {s}, user: {u}" % (p=self.product, s=self.score, u=self.user.username)
+            return "product: {p}, score: {s}, user: {u}" % (
+                     p=self.product, s=self.score, u=self.user.username)
     ```
 
 1.  Utilize the functionality of the models:
@@ -47,7 +48,7 @@ Simple abstract base classes to make implementing a review system easy.
     ...   score = 4,          # score is by default an int greater than 0 but less than 6
     ... )
     >>> product_review.save()
-    >>> user.reviews
+    >>> user.reviews.all()
     #####################
     >>> user.avg_review_score()
     #####################
