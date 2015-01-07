@@ -1,42 +1,32 @@
+import datetime
 from decimal import *
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericForeignKey#, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 
 
 
-MAX_SCORE = 5   # TODO: import MAX_SCORE from django settings
-MIN_SCORE = 1   # TODO: import MIN_SCORE from django settings
+# TODO: import settings from django settings
+MAX_SCORE = 5
+MIN_SCORE = 1
 SCORE_CHOICES = zip(
     range(MIN_SCORE, MAX_SCORE + 1),
     range(MIN_SCORE, MAX_SCORE + 1)
 )
 MAX_COMMENT_LENGTH = 1000
-
-
-
-class Reviewable(models.Model):
-    # reviews = models.ManyToManyField(
-    #     'User',
-    #     through='Review',
-    #     related_name='%(app_label)s_%(class)s_reviews',
-    # )
-
-    def avg_review_score(self):
-        getcontext().prec = 2
-        avg_review_score = Decimal()
-        for review in self.reviews.all():
-            avg_review_score += review.score
-        return avg_review_score / self.reviews.all().count()
-
-    class Meta:
-        abstract = True
+UPDATED_COMPARISON_TIMEDELTA = datetime.timedelta(0, 10)
+AVG_SCORE_DIGITS = 2
 
 
 
 class Review(models.Model):
-    # reviewed_object = models.ForeignKey('Reviewable')
-    user = models.ForeignKey(User)
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    reviewed_object = GenericForeignKey('content_type', 'object_id')
+
+    user = models.ForeignKey(User, related_name='reviews')
     score = models.PositiveSmallIntegerField(
         choices=SCORE_CHOICES,
     )
@@ -56,12 +46,31 @@ class Review(models.Model):
     )
 
     def is_updated(self):
-        """Return false is review not updated, otherwise return date_time of update."""
-        if self.created != self.updated:
+        """Return false if review not updated, otherwise return datetime of update."""
+        if self.updated - self.created > UPDATED_COMPARISON_TIMEDELTA:
+            # updated datetime is within 10 sec of created datetime
             return self.updated
         else:
             return False
 
+    def __unicode__(self):
+        return "object: {o}, score: {s}, user: {u}".format(
+                 o=self.reviewed_object, s=self.score, u=self.user.username)
+
+    # class Meta:
+    #     unique_together = ("reviewed_object", "user")
+
+
+
+class Reviewable(models.Model):
+    # reviews = GenericRelation(Review, related_query_name='%(class)ss')
+
+    def avg_review_score(self):
+        getcontext().prec = AVG_SCORE_DIGITS
+        avg_review_score = Decimal()
+        for review in self.reviews.all():
+            avg_review_score += review.score
+        return avg_review_score / self.reviews.count()
+
     class Meta:
         abstract = True
-        # unique_together = ("reviewed_object", "user")
