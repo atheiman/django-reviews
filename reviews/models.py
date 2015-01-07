@@ -19,7 +19,7 @@ class Reviewable(models.Model):
     # reviews = models.ManyToManyField(
     #     'User',
     #     through='Review',
-    #     related_name='%(app_label)s_%(class)s_related',
+    #     related_name='%(app_label)s_%(class)s_reviews',
     # )
 
     def avg_review_score(self):
@@ -57,3 +57,4 @@ class Review(models.Model):
 
     class Meta:
         abstract = True
+        # unique_together = ("reviewed_object", "user")

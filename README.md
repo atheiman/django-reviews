@@ -21,9 +21,9 @@ Simple abstract base classes to make implementing a review system easy.
         name = models.CharField(max_length=40)
         # ...
         reviews = models.ManyToManyField(
-            'User',                            # Reviews are tied to a User instance
-            through='ProductReview',           # Subclass of reviews.models.Review
-            related_name='product_reviews',    # related_name available from User instance
+            'User',                                           # Reviews are tied to a User instance
+            through='ProductReview',                          # Subclass of reviews.models.Review
+            related_name='%(app_label)s_%(class)s_reviews',   # related_name available from User instance
         )
         # ...
 
@@ -33,6 +33,9 @@ Simple abstract base classes to make implementing a review system easy.
         def __unicode__(self):
             return "product: {p}, score: {s}, user: {u}" % (
                      p=self.product, s=self.score, u=self.user.username)
+
+        class Meta:
+            unique_together = ("product", "user")   # only allow one review per product per user
     ```
 
 1.  Utilize the functionality of the models:
@@ -46,6 +49,7 @@ Simple abstract base classes to make implementing a review system easy.
     ...   product = product,
     ...   user = user,
     ...   score = 4,          # score is by default an int greater than 0 but less than 6
+    ...   comment = "This is a nice tv, I would buy it again.",
     ... )
     >>> product_review.save()
     >>> user.reviews.all()
@@ -59,3 +63,9 @@ Simple abstract base classes to make implementing a review system easy.
 ## More configuration
 
 These base classes are not that complex currently. To see all available fields, simply [browse the code](https://github.com/atheiman/django-reviews/blob/master/reviews/models.py)
+
+
+
+## Features to be added
+
+- [ ] prevent user submitting multiple reviews
