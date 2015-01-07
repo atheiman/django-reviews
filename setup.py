@@ -12,7 +12,7 @@ requirements = [
 
 setup(
     name='django-reviews',
-    version='0.1',
+    version='1.0',
     description='Django abstract base classes for creating a reviews application',
     author='Austin Heiman',
     author_email='atheimanksu@gmail.com',

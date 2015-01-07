@@ -39,25 +39,71 @@ Simple abstract base classes to make implementing a review system easy.
 
 
 
-## Basic Usage
+## Usage
+
+### Create reviews with `Review.objects.create()`. `user.reviews.add()` or `Reviewable.reviews.add()` will not work.
 
 ```python
+>>> from reviews.models import Review
+>>> from django.contrib.auth.models import User
+>>> from simple_app.models import Product
+>>>
+>>> user = User.objects.create_user(username='joetest')
+>>> product = Product.objects.create(name='22-inch TV')
+>>> review = Review.objects.create(
+...   reviewed_object = product,
+...   user = user,
+...   score = 3,
+...   comment = "I like this tv a lot, I would buy it again.",
+... )
+```
 
+### Simple lookups across the relationships:
+
+```python
+>>> user.reviews.all()
+[<Review: object: 22-inch TV, score: 3, user: joetest>]
+>>> product.reviews.all()
+[<Review: object: 22-inch TV, score: 3, user: joetest>]
+```
+
+### Reverse lookups from the Review table as well:
+
+```python
+>>> Review.objects.filter(products__name__contains='tv')
+[<Review: object: 22-inch TV, score: 3, user: joetest>]
+>>> Review.objects.filter(user__username__contains='joe')
+[<Review: object: 22-inch TV, score: 3, user: joetest>]
+```
+
+### Extra functions built into Reviewable base model:
+
+```python
+>>> user_2 = User.objects.create_user(username='atheiman')
+>>> review_2 = Review.objects.create(
+...   reviewed_object = product,
+...   user = user_2,
+...   score = 4,
+...   comment = "This is an outstanding television!",
+... )
+>>> product.avg_review_score()
+Decimal('3.5')
+```
+
+### Functionality available in Review:
+
+```python
+>>> review.is_updated()    # returns False if no updates
+False
+>>> review.score = 1
+>>> review.comment = "After using the tv for more than 10 seconds, it broke."
+>>> review.save()
+>>> review.is_updated()    # returns updated datetime if updated
+datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
 ```
 
 
 
 ## More Info
 
-These classes are not that complex currently. To see all available fields, simply [browse the code](https://github.com/atheiman/django-reviews/blob/master/reviews/models.py)
-
-
-
-## Features to be Added
-
-- [ ] import settings dict from django settings
-- [ ] prevent user submitting multiple reviews
-- [x] Review.updated() return False or updated DateTime
-- [ ] Reviewable.reviews = GenericRelation(Review, related_query_name='%(class)ss')
-- [ ] get all reviews pointing to a specific class
-- [ ] admin site
+These models are not all that complex currently. To see all available fields, simply [browse the code](https://github.com/atheiman/django-reviews/blob/master/reviews/models.py)
