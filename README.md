@@ -58,4 +58,4 @@ Simple abstract base classes to make implementing a review system easy.
 
 ## More configuration
 
-These base classes are not that complex currently. To see all available fields, simply [browse the code](https://github.com/atheiman/django-reviews/blob/master/accounts/models.py)
+These base classes are not that complex currently. To see all available fields, simply [browse the code](https://github.com/atheiman/django-reviews/blob/master/reviews/models.py)
