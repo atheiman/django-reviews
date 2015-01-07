@@ -5,20 +5,17 @@ from django.contrib.auth.models import User
 
 
 
-# TODO: import ReviewableModels from django settings
-
-
-
 MAX_SCORE = 5   # TODO: import MAX_SCORE from django settings
 MIN_SCORE = 1   # TODO: import MIN_SCORE from django settings
 SCORE_CHOICES = zip(
     range(MIN_SCORE, MAX_SCORE + 1),
     range(MIN_SCORE, MAX_SCORE + 1)
 )
+MAX_COMMENT_LENGTH = 1000
 
 
 
-class ReviewableModel(models.Model):
+class Reviewable(models.Model):
     # reviews = models.ManyToManyField(
     #     'User',
     #     through='Review',
@@ -38,10 +35,17 @@ class ReviewableModel(models.Model):
 
 
 class Review(models.Model):
-    # reviewed_object = models.ForeignKey('ReviewableModel')
+    # reviewed_object = models.ForeignKey('Reviewable')
     user = models.ForeignKey('User')
     score = models.PositiveSmallIntegerField(
         choices=SCORE_CHOICES,
+    )
+    comment = models.TextField(
+        max_length=MAX_COMMENT_LENGTH,
+        blank=True,
+    )
+    anonymous = models.BooleanField(
+        default=False,
     )
 
     created = models.DateTimeField(
@@ -53,4 +57,3 @@ class Review(models.Model):
 
     class Meta:
         abstract = True
-
