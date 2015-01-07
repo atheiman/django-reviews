@@ -36,7 +36,7 @@ class Reviewable(models.Model):
 
 class Review(models.Model):
     # reviewed_object = models.ForeignKey('Reviewable')
-    user = models.ForeignKey('User')
+    user = models.ForeignKey(User)
     score = models.PositiveSmallIntegerField(
         choices=SCORE_CHOICES,
     )

@@ -8,22 +8,23 @@ Simple abstract base classes to make implementing a review system easy.
 
 1.  Install django-reviews from GitHub using pip:
 
-    `pip install git+ssh://git@github.com/atheiman/django-reviews.git@master`
+    `pip install git+ssh://git@github.com/atheiman/django-reviews.git@master#egg=reviews`
 
 1.  In your app's `models.py` import the base classes and create your reviewable model and review model:
 
     ```python
-    from reviews.models import Reviewable, Review
     from django.db import models
     from django.contrib.auth.models import User
+
+    from reviews.models import Reviewable, Review
 
     class Product(Reviewable):
         name = models.CharField(max_length=40)
         # ...
         reviews = models.ManyToManyField(
-            'User',                                           # Reviews are tied to a User instance
+            User,                                           # Reviews are tied to a User instance
             through='ProductReview',                          # Subclass of reviews.models.Review
-            related_name='%(app_label)s_%(class)s_reviews',   # related_name available from User instance
+            related_name='%(app_label)s_%(class)s_reviews',   # available from User instance
         )
         # ...
 
@@ -31,7 +32,7 @@ Simple abstract base classes to make implementing a review system easy.
         product = models.ForeignKey('Product')
 
         def __unicode__(self):
-            return "product: {p}, score: {s}, user: {u}" % (
+            return "product: {p}, score: {s}, user: {u}".format(
                      p=self.product, s=self.score, u=self.user.username)
 
         class Meta:
