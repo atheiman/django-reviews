@@ -41,7 +41,7 @@ Simple abstract base classes to make implementing a review system easy.
 
 ## Usage
 
-###### Create reviews with `Review.objects.create()`. `user.reviews.add()` or `Reviewable.reviews.add()` will not work.
+Create reviews with `Review.objects.create()`. `user.reviews.add()` or `Reviewable.reviews.add()` will not work.
 
 ```python
 >>> from reviews.models import Review
@@ -58,7 +58,7 @@ Simple abstract base classes to make implementing a review system easy.
 ... )
 ```
 
-###### Simple lookups across the relationships:
+Simple lookups across the relationships:
 
 ```python
 >>> user.reviews.all()
@@ -67,7 +67,7 @@ Simple abstract base classes to make implementing a review system easy.
 [<Review: object: 22-inch TV, score: 3, user: joetest>]
 ```
 
-###### Reverse lookups from the Review table as well:
+Reverse lookups from the Review table as well:
 
 ```python
 >>> Review.objects.filter(products__name__contains='tv')
@@ -76,7 +76,7 @@ Simple abstract base classes to make implementing a review system easy.
 [<Review: object: 22-inch TV, score: 3, user: joetest>]
 ```
 
-###### Extra functions built into Reviewable base model:
+Extra functions built into Reviewable base model:
 
 ```python
 >>> user_2 = User.objects.create_user(username='atheiman')
@@ -90,7 +90,7 @@ Simple abstract base classes to make implementing a review system easy.
 Decimal('3.5')
 ```
 
-###### Functionality available in Review:
+Functionality available in Review:
 
 ```python
 >>> review.is_updated()    # returns False if no updates
