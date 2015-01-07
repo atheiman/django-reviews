@@ -20,4 +20,5 @@ setup(
     packages=find_packages(),
     package_dir={'reviews':
                  'reviews'},
+    install_requires=requirements,
 )
