@@ -55,6 +55,13 @@ class Review(models.Model):
         auto_now=True,
     )
 
+    def is_updated(self):
+        """Return false is review not updated, otherwise return date_time of update."""
+        if self.created != self.updated:
+            return self.updated
+        else:
+            return False
+
     class Meta:
         abstract = True
         # unique_together = ("reviewed_object", "user")
