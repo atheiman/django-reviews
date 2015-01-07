@@ -1,6 +1,6 @@
 # django-reviews
 
-Simple abstract base classes to make implementing a review system easy.
+A simple to use framework for user submitted reviews of objects.
 
 
 
@@ -41,7 +41,7 @@ Simple abstract base classes to make implementing a review system easy.
 
 ## Usage
 
-Create reviews with `Review.objects.create()`. `user.reviews.add()` or `Reviewable.reviews.add()` will not work.
+Create reviews with `Review.objects.create()`:
 
 ```python
 >>> from reviews.models import Review
