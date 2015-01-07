@@ -4,7 +4,7 @@ Simple abstract base classes to make implementing a review system easy.
 
 
 
-## Usage
+## Basic Usage
 
 1.  Install django-reviews from GitHub using pip:
 
@@ -60,12 +60,13 @@ Simple abstract base classes to make implementing a review system easy.
 
 
 
-## More configuration
+## More Info
 
 These base classes are not that complex currently. To see all available fields, simply [browse the code](https://github.com/atheiman/django-reviews/blob/master/reviews/models.py)
 
 
 
-## Features to be added
+## Features to be Added
 
-- [ ] prevent user submitting multiple reviews
+- [X] prevent user submitting multiple reviews
+- [ ] Review.updated() return False or update DateTime
