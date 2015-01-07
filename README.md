@@ -1,6 +1,6 @@
 # django-reviews
 
-`django-reviews` provides simple Django base models to be used to create reviewable objects.
+Simple abstract base classes to make implementing a review system easy.
 
 
 
