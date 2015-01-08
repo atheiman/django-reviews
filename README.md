@@ -142,7 +142,7 @@ These models are not all that complex currently. To see all available fields, si
 
 ### Testing
 
-If you want to extend this app, add tests to `tests/tests.py`. Test the `Reviewable` abstract base class by extending it in `tests.models.Product`. Run tests for this app by executing the `runtests.py` script:
+If you want to extend this app, add tests in the `tests/` dir. Test the `Reviewable` abstract base class by extending it in `tests.models.Product`. Run tests for this app by executing the `runtests.py` script:
 
 ```python
 $ ./runtests.py

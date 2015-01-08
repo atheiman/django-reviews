@@ -77,9 +77,9 @@ class ModelsTestCase(TestCase):
 
     def test_review(self):
         """Test functionality of reviews.models.Review class."""
+        u_1 = User.objects.get(username='joetest')
+        p_1 = Product.objects.get(name='22-inch TV')
         r_1 = Review.objects.get(reviewed_object = p_1, user = u_1)
-        r_2 = Review.objects.get(reviewed_object = p_1, user = u_2)
-        r_3 = Review.objects.get(reviewed_object = p_2, user = u_2)
 
         self.assertFalse(r_1.is_updated())
 
