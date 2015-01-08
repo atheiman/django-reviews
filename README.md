@@ -6,19 +6,22 @@ A simple to use framework for user submitted reviews of objects.
 
 ## Getting Started
 
-Imagine the use case of a web store. Logged in Users (`django.contrib.auth.User`) can submit reviews for Products (`simple_app.models.Product`), making `Product` the subclass of `reviews.models.Reviewable`.
+Imagine the use case of a web store. Logged in Users (`django.contrib.auth.User`) can submit reviews for Products (`store.models.Product`), making `Product` the subclass of `reviews.models.Reviewable`.
 
 1.  Install django-reviews from GitHub using pip:
 
     `pip install git+ssh://git@github.com/atheiman/django-reviews.git@master#egg=reviews`
 
-1.  Add django-reviews to your `INSTALLED_APPS`. Be sure the [contenttypes framework](https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/) is there too (in a default django project creation, it should be there).
+1.  Add `reviews` to your `INSTALLED_APPS`. Be sure `[django.contrib.auth](https://docs.djangoproject.com/en/1.7/ref/contrib/auth/)` and `[django.contrib.contenttypes](https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/)` are there too (in a default django project creation, they should be there).
 
     ```python
     INSTALLED_APPS = (
         # ...
+        'django.contrib.auth',
         'django.contrib.contenttypes',
         'reviews',
+        # ...
+        'store',       # included for this example
         # ...
     )
     ```
@@ -32,6 +35,8 @@ Imagine the use case of a web store. Logged in Users (`django.contrib.auth.User`
 
     class Product(Reviewable):
         name = models.CharField(max_length=40)
+
+        # ...
 
         reviews = GenericRelation(Review, related_query_name="products")
 
@@ -106,6 +111,39 @@ datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
 
 
 
+## Configuration
+
+You can configure django-reviews in your django settings. Create a `DJANGO_REVIEWS` dict in your settings file, and add settings keys and values as you prefer. Generally the default are created from how [Amazon.com](http://www.amazon.com/) implements reviews. Below are all the available settings, their defaults, and a brief explanation:
+
+TODO: document settings
+
+```python
+# settings.py
+
+DJANGO_REVIEWS = {}
+DJANGO_REVIEWS['MAX_SCORE'] = 5
+DJANGO_REVIEWS['MIN_SCORE'] = 1
+DJANGO_REVIEWS['SCORE_CHOICES'] = zip(
+    range(DJANGO_REVIEWS['MIN_SCORE'], DJANGO_REVIEWS['MAX_SCORE'] + 1),
+    range(DJANGO_REVIEWS['MIN_SCORE'], DJANGO_REVIEWS['MAX_SCORE'] + 1)
+)
+DJANGO_REVIEWS['MAX_COMMENT_LENGTH'] = 1000,
+DJANGO_REVIEWS['UPDATED_COMPARISON_SECONDS'] = 3
+DJANGO_REVIEWS['AVG_SCORE_DIGITS'] = 2
+```
+
+
+
 ## More Info
 
 These models are not all that complex currently. To see all available fields, simply [browse the code](https://github.com/atheiman/django-reviews/blob/master/reviews/models.py)
+
+
+
+### Testing
+
+If you want to extend this app, add tests to `tests/tests.py`. Test the `Reviewable` abstract base class by extending it in `tests.models.Product`. Run tests for this app by executing the `runtests.py` script:
+
+```python
+$ ./runtests.py
+```
