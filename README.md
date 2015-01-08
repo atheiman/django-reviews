@@ -4,13 +4,15 @@ A simple to use framework for user submitted reviews of objects.
 
 
 
-## Gettings Started
+## Getting Started
+
+Imagine the use case of a web store. Logged in Users (`django.contrib.auth.User`) can submit reviews for Products (`simple_app.models.Product`), making `Product` the subclass of `reviews.models.Reviewable`.
 
 1.  Install django-reviews from GitHub using pip:
 
     `pip install git+ssh://git@github.com/atheiman/django-reviews.git@master#egg=reviews`
 
-1.  Add django-reviews to your `INSTALLED_APPS`. Be sure the [contenttypes framework](https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/#django.contrib.contenttypes.generic.GenericForeignKey) is there too (in a default django project creation, it should be there).
+1.  Add django-reviews to your `INSTALLED_APPS`. Be sure the [contenttypes framework](https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/) is there too (in a default django project creation, it should be there).
 
     ```python
     INSTALLED_APPS = (
