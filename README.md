@@ -116,13 +116,14 @@ You can configure django-reviews in your django settings. Create a `DJANGO_REVIE
 
 | Setting Key                  | Default | Notes                                            |
 | :--------------------------- | :------ | :----------------------------------------------- |
-| `MAX_SCORE`                  | 5       | Maximum value of `Review.score`.                 |
-| `MIN_SCORE`                  | 1       | Minimum value of `Review.score`.                 |
+| `MAX_SCORE`                  | `5`     | Maximum value of `Review.score`.                 |
+| `MIN_SCORE`                  | `1`     | Minimum value of `Review.score`.                 |
 | `SCORE_CHOICES`              | `zip(range(MIN_SCORE, MAX_SCORE + 1),range(MIN_SCORE, MAX_SCORE + 1))` | List of tuple pairs to be used as a [`choices`](https://docs.djangoproject.com/en/1.7/ref/models/fields/#choices) list of acceptable `Review.score` values. The default evaluates to `[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)]` (accepts user input of integers between 1 and 5) if `MIN_SCORE` and `MAX_SCORE` have not been changed. Otherwise it will generate a list of choices as integers from `MIN_SCORE` to `MAX_SCORE`. |
-| `MAX_COMMENT_LENGTH`         | 1000    | Maximum length of `Review.comment` [`TextField`](https://docs.djangoproject.com/en/1.7/ref/models/fields/#textfield). |
-| `UPDATED_COMPARISON_SECONDS` | 10      | Number of seconds required to pass before changes to any `Review` fields cause `Review.is_updated()` to return the `Review.update` `datetime` instance. If the number of seconds has not passed, the `Review.is_updated()` method returns `False`. |
-| `AVG_SCORE_DIGITS`           | 2       | Number of digits in the [`Decimal`](https://docs.python.org/2/library/decimal.html) instance returned by `Review.avg_review_score()`. |
-| COMMENT_APPROVAL_REQUIRED    | False   | If `True`, `Review.is_publishable()` will check `Review.approved` [`BooleanField`]() before returning `True`. `Review.approved` can be set in the admin. |
+| `MAX_COMMENT_LENGTH`         | `1000`  | Maximum length of `Review.comment` [`TextField`](https://docs.djangoproject.com/en/1.7/ref/models/fields/#textfield). |
+| `UPDATED_COMPARISON_SECONDS` | `10`    | Number of seconds required to pass before changes to any `Review` fields cause `Review.is_updated()` to return the `Review.update` `datetime` instance. If the number of seconds has not passed, the `Review.is_updated()` method returns `False`. |
+| `AVG_SCORE_DIGITS`           | `2`     | Number of digits in the [`Decimal`](https://docs.python.org/2/library/decimal.html) instance returned by `Review.avg_review_score()`. |
+| `COMMENT_REQUIRED`           | `False` | If `True`, `Review.comment` [`TextField`](https://docs.djangoproject.com/en/1.7/ref/models/fields/#textfield) will be required. |
+| `COMMENT_APPROVAL_REQUIRED`  | `False` | If `True`, `Review.comment_approved` will be `False` by default. You could use this to render a review without its comment until a staff member has approved the comment. |
 
 > **Note**
 >

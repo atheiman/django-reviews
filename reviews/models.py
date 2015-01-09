@@ -21,13 +21,13 @@ class Review(models.Model):
     )
     comment = models.TextField(
         max_length=MAX_COMMENT_LENGTH,
-        blank=True,
+        blank=not COMMENT_REQUIRED,
     )
     anonymous = models.BooleanField(
         default=False,
     )
-    approved = models.BooleanField(
-        default=False,
+    comment_approved = models.BooleanField(
+        default=not COMMENT_APPROVAL_REQUIRED,
     )
 
     created = models.DateTimeField(
@@ -45,17 +45,16 @@ class Review(models.Model):
         else:
             return False
 
-    def is_publishable(self):
-        """Checks requirements for publishing a review."""
-        active = False
-        if COMMENT_APPROVAL_REQUIRED:
-            if self.approved:
-                active = True
-        return active
-
     def __unicode__(self):
         return "object: {o}, score: {s}, user: {u}".format(
                  o=self.reviewed_object, s=self.score, u=self.user.username)
+
+    def save(self, *args, **kwargs):
+        # set self.comment_approved if no comment
+        if not self.comment:
+            self.comment_approved = True
+
+        super(Review, self).save(*args, **kwargs)
 
     # class Meta:
     #     unique_together = ("reviewed_object", "user")

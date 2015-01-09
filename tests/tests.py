@@ -52,19 +52,19 @@ class ModelsTestCase(TestCase):
         u_1 = UserFactory()
         u_2 = UserFactory()
         r_1 = ReviewFactory(
-            user = u_1,
-            reviewed_object = p_1,
-            score = 3,
+            user=u_1,
+            reviewed_object=p_1,
+            score=3,
         )
         r_2 = ReviewFactory(
-            user = u_1,
-            reviewed_object = p_2,
-            score = 3,
+            user=u_1,
+            reviewed_object=p_2,
+            score=3,
         )
         r_3 = ReviewFactory(
-            user = u_2,
-            reviewed_object = p_1,
-            score = 4,
+            user=u_2,
+            reviewed_object=p_1,
+            score=4,
         )
 
         self.assertEqual(p_1.avg_review_score(), Decimal(3.5))
@@ -75,7 +75,7 @@ class ModelsTestCase(TestCase):
         """Test reviews.models.Review.is_updated()."""
         u_1 = UserFactory()
         p_1 = ProductFactory()
-        r_1 = ReviewFactory(reviewed_object = p_1, user = u_1)
+        r_1 = ReviewFactory(reviewed_object=p_1, user=u_1)
 
         self.assertFalse(r_1.is_updated())
 
@@ -88,11 +88,18 @@ class ModelsTestCase(TestCase):
 
         self.assertIsInstance(r_1.is_updated(), datetime.datetime)
 
-    def test_review_is_publishable(self):
+    def test_review_comment_approved(self):
         u_1 = UserFactory()
+        u_2 = UserFactory()
         p_1 = ProductFactory()
-        r_1 = ReviewFactory(reviewed_object = p_1, user = u_1)
+        r_1 = ReviewFactory(reviewed_object=p_1,
+                            user=u_1,
+                            comment="",)
+        r_2 = ReviewFactory(reviewed_object=p_1,
+                            user=u_2,
+                            comment="I need approval before publishing",)
 
-        self.assertFalse(r_1.is_publishable())
-        r_1.approved = True
-        self.assertTrue(r_1.is_publishable())
+        self.assertTrue(r_1.comment_approved)
+        self.assertFalse(r_2.comment_approved)
+        r_2.comment_approved = True
+        self.assertTrue(r_2.comment_approved)
