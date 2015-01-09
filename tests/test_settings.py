@@ -23,13 +23,16 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'TEST': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
+        # Uncomment to test with a sqlite3 database, otherwise test in memory
+        # 'TEST': {
+        #     'ENGINE': 'django.db.backends.sqlite3',
+        #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # }
     }
 }
 
 
 DJANGO_REVIEWS = {}
 DJANGO_REVIEWS['UPDATED_COMPARISON_SECONDS'] = 1
+DJANGO_REVIEWS['MAX_SCORE'] = 5
+DJANGO_REVIEWS['MIN_SCORE'] = 1

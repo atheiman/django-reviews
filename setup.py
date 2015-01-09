@@ -9,6 +9,10 @@ requirements = [
     'django>=1.6,<2.0',
 ]
 
+test_requirements = [
+    'factory-boy>=2.4,<3.0',
+]
+
 
 setup(
     name='django-reviews',
@@ -21,4 +25,5 @@ setup(
     package_dir={'reviews':
                  'reviews'},
     install_requires=requirements,
+    tests_requires=requirements + test_requirements,
 )

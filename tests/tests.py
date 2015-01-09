@@ -5,35 +5,39 @@ import time
 import datetime
 
 from django.test import TestCase
-from django.contrib.auth.models import User
 from django.conf import settings
 
-from .models import *
+from .models import Product
+from reviews.models import Review
+from django.contrib.auth.models import User
+
+from .factories import UserFactory, ProductFactory, ReviewFactory
+
 
 
 
 class ModelsTestCase(TestCase):
     def setUp(self):
         """Create users, products, and reviews."""
-        u_1 = User.objects.create_user(username='joetest')
-        u_2 = User.objects.create_user(username='atheiman')
-        u_3 = User.objects.create_user(username='willie')
-        p_1 = Product.objects.create(name='22-inch TV')
-        p_2 = Product.objects.create(name='8-inch Tablet')
-        p_3 = Product.objects.create(name='Kitchen Table')
-        r_1 = Review.objects.create(
+        u_1 = UserFactory.create(username='joetest')
+        u_2 = UserFactory.create(username='atheiman')
+        u_3 = UserFactory.create(username='willie')
+        p_1 = ProductFactory.create(name='22-inch TV')
+        p_2 = ProductFactory.create(name='8-inch Tablet')
+        p_3 = ProductFactory.create(name='Kitchen Table')
+        r_1 = ReviewFactory.create(
             reviewed_object = p_1,
             user = u_1,
             score = 3,
             comment = "I like this tv a lot, I would buy it again.",
         )
-        r_2 = Review.objects.create(
+        r_2 = ReviewFactory.create(
             reviewed_object = p_1,
             user = u_2,
             score = 4,
             comment = "This is an outstanding television!",
         )
-        r_3 = Review.objects.create(
+        r_3 = ReviewFactory.create(
             reviewed_object = p_2,
             user = u_2,
             score = 3,
@@ -85,15 +89,17 @@ class ModelsTestCase(TestCase):
 
         self.assertFalse(r_1.is_updated())
 
-        print 'sleeping to check Review.is_updated() time difference...'
         time.sleep(
-            getattr(settings,
-                    "DJANGO_REVIEWS",
-                    {}).get('UPDATED_COMPARISON_SECONDS',
-                            10) + 1
+            settings.DJANGO_REVIEWS.get('UPDATED_COMPARISON_SECONDS') + 1
         )
 
         r_1.score += 1
         r_1.save()
 
         self.assertIsInstance(r_1.is_updated(), datetime.datetime)
+
+    # def test_review_is_publishable(self):
+    #     u_1 = User.objects.get(username='joetest')
+    #     p_1 = Product.objects.get(name='22-inch TV')
+    #     r_1 = Review.objects.get(product = p_1, user = u_1)
+

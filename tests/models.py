@@ -1,4 +1,3 @@
-
 """Example use case for django-reviews, Product is a subclass of reviews.Reviewable."""
 
 from django.db import models
