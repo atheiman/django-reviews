@@ -26,6 +26,9 @@ class Review(models.Model):
     anonymous = models.BooleanField(
         default=False,
     )
+    approved = models.BooleanField(
+        default=False,
+    )
 
     created = models.DateTimeField(
         auto_now_add=True,
@@ -41,6 +44,14 @@ class Review(models.Model):
             return self.updated
         else:
             return False
+
+    def is_publishable(self):
+        """Checks requirements for publishing a review."""
+        active = False
+        if COMMENT_APPROVAL_REQUIRED:
+            if self.approved:
+                active = True
+        return active
 
     def __unicode__(self):
         return "object: {o}, score: {s}, user: {u}".format(

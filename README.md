@@ -122,6 +122,7 @@ You can configure django-reviews in your django settings. Create a `DJANGO_REVIE
 | `MAX_COMMENT_LENGTH`         | 1000    | Maximum length of `Review.comment` [`TextField`](https://docs.djangoproject.com/en/1.7/ref/models/fields/#textfield). |
 | `UPDATED_COMPARISON_SECONDS` | 10      | Number of seconds required to pass before changes to any `Review` fields cause `Review.is_updated()` to return the `Review.update` `datetime` instance. If the number of seconds has not passed, the `Review.is_updated()` method returns `False`. |
 | `AVG_SCORE_DIGITS`           | 2       | Number of digits in the [`Decimal`](https://docs.python.org/2/library/decimal.html) instance returned by `Review.avg_review_score()`. |
+| COMMENT_APPROVAL_REQUIRED    | False   | If `True`, `Review.is_publishable()` will check `Review.approved` [`BooleanField`]() before returning `True`. `Review.approved` can be set in the admin. |
 
 > **Note**
 >
