@@ -6,13 +6,13 @@ A simple to use framework for user submitted reviews of objects.
 
 ## Getting Started
 
-Imagine the use case of a web store. Logged in Users (`django.contrib.auth.User`) can submit reviews for Products (`store.models.Product`), making `Product` the subclass of `reviews.models.Reviewable`.
+Imagine the use case of a web store. Users (`django.contrib.auth.User`) can submit reviews for Products (`store.models.Product`), making `Product` the subclass of `reviews.models.Reviewable`. Here's how to create a simple store application using the django-reviews framework.
 
 1.  Install django-reviews from GitHub using pip:
 
-    `pip install git+ssh://git@github.com/atheiman/django-reviews.git@master#egg=reviews`
+    `pip install git+ssh://git@github.com/atheiman/django-reviews.git@1.0.0#egg=reviews`
 
-1.  Add `reviews` to your `INSTALLED_APPS`. Be sure `[django.contrib.auth](https://docs.djangoproject.com/en/1.7/ref/contrib/auth/)` and `[django.contrib.contenttypes](https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/)` are there too (in a default django project creation, they should be there).
+1.  Add `reviews` to `INSTALLED_APPS`. Be sure [`django.contrib.auth`](https://docs.djangoproject.com/en/1.7/ref/contrib/auth/) and [`django.contrib.contenttypes`](https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/) are there too (in a default django project creation, they should be there).
 
     ```python
     INSTALLED_APPS = (
@@ -20,13 +20,12 @@ Imagine the use case of a web store. Logged in Users (`django.contrib.auth.User`
         'django.contrib.auth',
         'django.contrib.contenttypes',
         'reviews',
-        # ...
-        'store',       # included for this example
+        'store',       # our app included for this example
         # ...
     )
     ```
 
-1.  In your app's `models.py` import the necessary classes and create your reviewable model:
+1.  In the store app's `models.py` import the necessary classes and create the `Product` model from the `Reviewable` base class:
 
     ```python
     from django.db import models
@@ -74,7 +73,7 @@ Simple lookups across the relationships:
 [<Review: object: 22-inch TV, score: 3, user: joetest>]
 ```
 
-Reverse lookups from the Review table as well:
+Reverse lookups from the `Review` table as well:
 
 ```python
 >>> Review.objects.filter(products__name__contains='tv')
@@ -83,7 +82,7 @@ Reverse lookups from the Review table as well:
 [<Review: object: 22-inch TV, score: 3, user: joetest>]
 ```
 
-Extra functions built into Reviewable base model:
+Extra functions built into `Reviewable` abstract base model:
 
 ```python
 >>> user_2 = User.objects.create_user(username='atheiman')
@@ -97,7 +96,7 @@ Extra functions built into Reviewable base model:
 Decimal('3.5')
 ```
 
-Functionality available in Review:
+Functionality available in `Review`:
 
 ```python
 >>> review.is_updated()    # returns False if no updates
@@ -113,24 +112,20 @@ datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
 
 ## Configuration
 
-You can configure django-reviews in your django settings. Create a `DJANGO_REVIEWS` dict in your settings file, and add settings keys and values as you prefer. Generally the default are created from how [Amazon.com](http://www.amazon.com/) implements reviews. Below are all the available settings, their defaults, and a brief explanation:
+You can configure django-reviews in your django settings. Create a `DJANGO_REVIEWS` dict in your settings file, and add settings keys and values as you prefer. Generally the defaults are created from how [Amazon.com](http://www.amazon.com/) implements reviews. Below are all the available settings, their defaults, and a brief explanation.
 
-TODO: document settings
+| Setting Key                  | Default | Notes                                            |
+| :--------------------------- | :------ | :----------------------------------------------- |
+| `MAX_SCORE`                  | 5       | Maximum value of `Review.score`.                 |
+| `MIN_SCORE`                  | 1       | Minimum value of `Review.score`.                 |
+| `SCORE_CHOICES`              | `zip(range(MIN_SCORE, MAX_SCORE + 1),range(MIN_SCORE, MAX_SCORE + 1))` | List of tuple pairs to be used as a [`choices`](https://docs.djangoproject.com/en/1.7/ref/models/fields/#choices) list of acceptable `Review.score` values. The default evaluates to `[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)]` (accepts user input of integers between 1 and 5) if `MIN_SCORE` and `MAX_SCORE` have not been changed. Otherwise it will generate a list of choices as integers from `MIN_SCORE` to `MAX_SCORE`. |
+| `MAX_COMMENT_LENGTH`         | 1000    | Maximum length of `Review.comment` [`TextField`](https://docs.djangoproject.com/en/1.7/ref/models/fields/#textfield). |
+| `UPDATED_COMPARISON_SECONDS` | 10      | Number of seconds required to pass before changes to any `Review` fields cause `Review.is_updated()` to return the `Review.update` `datetime` instance. If the number of seconds has not passed, the `Review.is_updated()` method returns `False`. |
+| `AVG_SCORE_DIGITS`           | 2       | Number of digits in the [`Decimal`](https://docs.python.org/2/library/decimal.html) instance returned by `Review.avg_review_score()`. |
 
-```python
-# settings.py
-
-DJANGO_REVIEWS = {}
-DJANGO_REVIEWS['MAX_SCORE'] = 5
-DJANGO_REVIEWS['MIN_SCORE'] = 1
-DJANGO_REVIEWS['SCORE_CHOICES'] = zip(
-    range(DJANGO_REVIEWS['MIN_SCORE'], DJANGO_REVIEWS['MAX_SCORE'] + 1),
-    range(DJANGO_REVIEWS['MIN_SCORE'], DJANGO_REVIEWS['MAX_SCORE'] + 1)
-)
-DJANGO_REVIEWS['MAX_COMMENT_LENGTH'] = 1000,
-DJANGO_REVIEWS['UPDATED_COMPARISON_SECONDS'] = 3
-DJANGO_REVIEWS['AVG_SCORE_DIGITS'] = 2
-```
+> **Note**
+>
+> Other configuration could easily be done by subclassing either `reviews.models.Review` or `reviews.models.Reviewable` before using them.
 
 
 
@@ -142,6 +137,6 @@ These models are not all that complex currently. To see all available fields, si
 
 ## Testing
 
-```python
+```shell
 $ ./runtests.py
 ```

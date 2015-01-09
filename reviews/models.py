@@ -53,7 +53,6 @@ class Review(models.Model):
 
 class Reviewable(models.Model):
     # http://stackoverflow.com/a/2752194/3343740
-    # http://stackoverflow.com/questions/2752184/python-grab-class-in-class-definition/2752194#2752194
     # reviews = GenericRelation(Review, related_query_name='%(class)ss')
 
     def avg_review_score(self):
