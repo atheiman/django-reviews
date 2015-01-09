@@ -17,44 +17,17 @@ from .factories import UserFactory, ProductFactory, ReviewFactory
 
 
 class ModelsTestCase(TestCase):
-    def setUp(self):
-        """Create users, products, and reviews."""
-        u_1 = UserFactory.create(username='joetest')
-        u_2 = UserFactory.create(username='atheiman')
-        u_3 = UserFactory.create(username='willie')
-        p_1 = ProductFactory.create(name='22-inch TV')
-        p_2 = ProductFactory.create(name='8-inch Tablet')
-        p_3 = ProductFactory.create(name='Kitchen Table')
-        r_1 = ReviewFactory.create(
-            reviewed_object = p_1,
-            user = u_1,
-            score = 3,
-            comment = "I like this tv a lot, I would buy it again.",
-        )
-        r_2 = ReviewFactory.create(
-            reviewed_object = p_1,
-            user = u_2,
-            score = 4,
-            comment = "This is an outstanding television!",
-        )
-        r_3 = ReviewFactory.create(
-            reviewed_object = p_2,
-            user = u_2,
-            score = 3,
-            comment = "My food doesn't taste any better off this table...",
-        )
-
     def test_relationships(self):
         """Test accessing objects across relationships."""
-        u_1 = User.objects.get(username='joetest')
-        u_2 = User.objects.get(username='atheiman')
-        u_3 = User.objects.get(username='willie')
-        p_1 = Product.objects.get(name='22-inch TV')
-        p_2 = Product.objects.get(name='8-inch Tablet')
-        p_3 = Product.objects.get(name='Kitchen Table')
-        r_1 = Review.objects.get(product = p_1, user = u_1)
-        r_2 = Review.objects.get(product = p_1, user = u_2)
-        r_3 = Review.objects.get(product = p_2, user = u_2)
+        u_1 = UserFactory()
+        u_2 = UserFactory()
+        u_3 = UserFactory()
+        p_1 = ProductFactory()
+        p_2 = ProductFactory()
+        p_3 = ProductFactory()
+        r_1 = ReviewFactory(reviewed_object=p_1, user=u_1)
+        r_2 = ReviewFactory(reviewed_object=p_1, user=u_2)
+        r_3 = ReviewFactory(reviewed_object=p_2, user=u_2)
 
         # product -> reviews
         self.assertIn(r_1, p_1.reviews.all())
@@ -73,9 +46,26 @@ class ModelsTestCase(TestCase):
 
     def test_reviewable(self):
         """Test reviews.models.Reviewable.avg_review_score()."""
-        p_1 = Product.objects.get(name='22-inch TV')
-        p_2 = Product.objects.get(name='8-inch Tablet')
-        p_3 = Product.objects.get(name='Kitchen Table')
+        p_1 = ProductFactory()
+        p_2 = ProductFactory()
+        p_3 = ProductFactory()
+        u_1 = UserFactory()
+        u_2 = UserFactory()
+        r_1 = ReviewFactory(
+            user = u_1,
+            reviewed_object = p_1,
+            score = 3,
+        )
+        r_2 = ReviewFactory(
+            user = u_1,
+            reviewed_object = p_2,
+            score = 3,
+        )
+        r_3 = ReviewFactory(
+            user = u_2,
+            reviewed_object = p_1,
+            score = 4,
+        )
 
         self.assertEqual(p_1.avg_review_score(), Decimal(3.5))
         self.assertEqual(p_2.avg_review_score(), Decimal(3.0))
@@ -83,9 +73,9 @@ class ModelsTestCase(TestCase):
 
     def test_review_avg_review_score(self):
         """Test reviews.models.Review.is_updated()."""
-        u_1 = User.objects.get(username='joetest')
-        p_1 = Product.objects.get(name='22-inch TV')
-        r_1 = Review.objects.get(product = p_1, user = u_1)
+        u_1 = UserFactory()
+        p_1 = ProductFactory()
+        r_1 = ReviewFactory(reviewed_object = p_1, user = u_1)
 
         self.assertFalse(r_1.is_updated())
 
@@ -98,8 +88,11 @@ class ModelsTestCase(TestCase):
 
         self.assertIsInstance(r_1.is_updated(), datetime.datetime)
 
-    # def test_review_is_publishable(self):
-    #     u_1 = User.objects.get(username='joetest')
-    #     p_1 = Product.objects.get(name='22-inch TV')
-    #     r_1 = Review.objects.get(product = p_1, user = u_1)
+    def test_review_is_publishable(self):
+        u_1 = UserFactory()
+        p_1 = ProductFactory()
+        r_1 = ReviewFactory(reviewed_object = p_1, user = u_1)
 
+        self.assertFalse(r_1.is_publishable())
+        r_1.approved = True
+        self.assertTrue(r_1.is_publishable())
