@@ -6,18 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey#, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
-
-
-# TODO: import settings from django settings
-MAX_SCORE = 5
-MIN_SCORE = 1
-SCORE_CHOICES = zip(
-    range(MIN_SCORE, MAX_SCORE + 1),
-    range(MIN_SCORE, MAX_SCORE + 1)
-)
-MAX_COMMENT_LENGTH = 1000
-UPDATED_COMPARISON_TIMEDELTA = datetime.timedelta(0, 10)
-AVG_SCORE_DIGITS = 2
+from .defaults import *
 
 
 
@@ -47,7 +36,7 @@ class Review(models.Model):
 
     def is_updated(self):
         """Return false if review not updated, otherwise return datetime of update."""
-        if self.updated - self.created > UPDATED_COMPARISON_TIMEDELTA:
+        if self.updated - self.created > datetime.timedelta(0, UPDATED_COMPARISON_SECONDS):
             # updated datetime is within 10 sec of created datetime
             return self.updated
         else:
@@ -63,9 +52,13 @@ class Review(models.Model):
 
 
 class Reviewable(models.Model):
+    # http://stackoverflow.com/a/2752194/3343740
     # reviews = GenericRelation(Review, related_query_name='%(class)ss')
 
     def avg_review_score(self):
+        """Return None for no reviews, or 2 digit Decimal review score avg."""
+        if self.reviews.all().count() < 1:
+            return None
         getcontext().prec = AVG_SCORE_DIGITS
         avg_review_score = Decimal()
         for review in self.reviews.all():
