@@ -45,7 +45,7 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
 
 
 
-## Usage
+## Basic Model Usage
 
 Create reviews with `Review.objects.create()`:
 
