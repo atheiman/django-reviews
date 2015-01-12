@@ -3,7 +3,7 @@ from decimal import *
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.fields import GenericForeignKey#, GenericRelation
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
 from .defaults import *
@@ -62,8 +62,10 @@ class Review(models.Model):
 
 
 class Reviewable(models.Model):
-    # http://stackoverflow.com/a/2752194/3343740
-    # reviews = GenericRelation(Review, related_query_name='%(class)ss')
+    """Generic reviewable model to be subclassed.
+
+    To be deprecated in favor of reviews.decorators.reviewable.
+    """
 
     def avg_review_score(self):
         """Return None for no reviews, or 2 digit Decimal review score avg."""

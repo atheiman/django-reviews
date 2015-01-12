@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
-from reviews.models import Review, Reviewable
+from reviews.models import Review#, Reviewable
 from reviews.decorators import reviewable
 
 

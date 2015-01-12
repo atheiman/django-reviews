@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from reviews.models import Review, Reviewable
 
+# from store.models import Product
+
 class Product(Reviewable):
     name = models.CharField(max_length=40, unique=True)
 

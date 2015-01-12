@@ -1,6 +1,9 @@
+from decimal import *
+
 from django.contrib.contenttypes.fields import GenericRelation
 
 from .models import Review
+from .defaults import *
 
 
 
