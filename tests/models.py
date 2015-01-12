@@ -2,11 +2,13 @@
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
-from reviews.models import Review, Reviewable
+from reviews.models import Review
+from reviews.decorators import reviewable
 
-# from store.models import Product
 
-class Product(Reviewable):
+
+@reviewable
+class Product(models.Model):
     name = models.CharField(max_length=40, unique=True)
 
     reviews = GenericRelation(Review, related_query_name="product")
