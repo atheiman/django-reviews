@@ -1,4 +1,7 @@
 from django.db.models import get_models
+from django.contrib.contenttypes.models import ContentType
+
+
 
 def get_reviewable_models():
     models = get_models(include_auto_created=True)
