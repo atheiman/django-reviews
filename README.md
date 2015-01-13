@@ -3,6 +3,8 @@
 A simple to use framework for user submitted reviews of objects.
 
 
+<hr>
+
 
 ## Getting Started
 
@@ -58,6 +60,8 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
             return self.name
     ```
 
+
+<hr>
 
 
 ## Basic Model Usage
@@ -124,6 +128,8 @@ datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
 ```
 
 
+<hr>
+
 
 ## Configuration
 
@@ -145,11 +151,15 @@ You can configure django-reviews in your django settings. Create a `DJANGO_REVIE
 > Other configuration could easily be done by subclassing either `reviews.models.Review` or `reviews.models.Reviewable` before using them.
 
 
+<hr>
+
 
 ## More Info
 
 The `Review` model is not all that complex. To see all available fields for the model, simply [browse the code](https://github.com/atheiman/django-reviews/blob/master/reviews/models.py).
 
+
+<hr>
 
 
 ## Testing
