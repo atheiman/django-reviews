@@ -7,17 +7,24 @@ from .utils import get_reviewable_model_classes
 
 
 
-def model_name(obj):
-    """Return name of reviewed model.
+def reviewed_model_linked(obj):
+    """Return a direct link to the reviewed model admin.
 
     obj is a Review object."""
-    return obj.content_type.name.title()
-model_name.short_description = "Reviewed model"
+    url = reverse(
+        'admin:{app_label}_{model_name}_changelist'.format(
+            app_label=obj.content_type.app_label,
+            model_name=obj.content_type.model,
+        )
+    )
+    return "<a href='%s'>%s</a>" % (url, obj.content_type.name.title())
+reviewed_model_linked.allow_tags = True
+reviewed_model_linked.short_description = "Reviewed model"
 
 
 
 def reviewed_object_linked(obj):
-    """Return a direct link to the reviewed object.
+    """Return a direct link to the reviewed object admin.
 
     obj is a Review object."""
     url = reverse(
@@ -27,8 +34,7 @@ def reviewed_object_linked(obj):
         ),
         args=(obj.reviewed_object.id,)
     )
-    url = "<a href='%s'>%s</a>" % (url, obj.reviewed_object)
-    return url
+    return "<a href='%s'>%s</a>" % (url, obj.reviewed_object)
 reviewed_object_linked.allow_tags = True
 reviewed_object_linked.short_description = "Reviewed object"
 
@@ -39,7 +45,7 @@ def get_reviewable_models():
 
     Example output:
 
-    [(u'user', u'User'), (u'product', u'Product')]"""
+    [(u'seller', u'Seller'), (u'product', u'Product')]"""
     model_classes = get_reviewable_model_classes()
     reviewable_models = []
     for klass in model_classes:
@@ -72,7 +78,7 @@ class ReviewedModelListFilter(admin.SimpleListFilter):
 class ReviewAdmin(admin.ModelAdmin):
     list_display = [
         'id',
-        model_name,
+        reviewed_model_linked,
         reviewed_object_linked,
         'user',
         'score',
@@ -85,7 +91,7 @@ class ReviewAdmin(admin.ModelAdmin):
         'score',
     ]
     readonly_fields = [
-        model_name,
+        reviewed_model_linked,
         reviewed_object_linked,
         'user',
         'score',
