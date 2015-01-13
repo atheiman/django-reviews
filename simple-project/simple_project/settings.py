@@ -83,3 +83,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+DJANGO_REVIEWS = {}
+DJANGO_REVIEWS['REVIEWABLE_MODELS'] = [
+    {
+        'app_label': 'store',
+        'model': 'product',
+    },
+]

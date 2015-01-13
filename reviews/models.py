@@ -1,4 +1,4 @@
-import datetime
+import datetime, operator
 from decimal import *
 
 from django.db import models
@@ -11,7 +11,11 @@ from .defaults import *
 
 
 class Review(models.Model):
-    content_type = models.ForeignKey(ContentType)
+    if REVIEWABLE_MODELS:
+        limit = reduce(operator.or_, (models.Q(**condition) for condition in REVIEWABLE_MODELS))
+    else:
+        limit = None
+    content_type = models.ForeignKey(ContentType, limit_choices_to=limit)
     object_id = models.PositiveIntegerField()
     reviewed_object = GenericForeignKey('content_type', 'object_id')
 
