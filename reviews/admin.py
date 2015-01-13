@@ -1,8 +1,9 @@
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import admin
 from django.core.urlresolvers import reverse
-from django.db.models import get_models
+
 from .models import Review
+from .utils import get_reviewable_models
 
 
 
@@ -34,19 +35,7 @@ class ReviewedModelListFilter(admin.SimpleListFilter):
     parameter_name = 'reviewed_model'
 
     def lookups(self, request, model_admin):
-        models = get_models(include_auto_created=True)
-
-        reviewable_models = []
-        for model in models:
-            if hasattr(model, 'reviews'):
-                reviewable_models.append(
-                    (
-                        ContentType.objects.get_for_model(model).name,
-                        ContentType.objects.get_for_model(model).name.title(),
-                    )
-                )
-
-        return reviewable_models
+        return get_reviewable_models()
 
     def queryset(self, request, queryset):
         if self.value() is not None:
