@@ -37,7 +37,7 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
     ]
     ```
 
-    > **Note**
+    > **Note**<br>
     > Defining the `DJANGO_REVIEWS` dict for configuration is not _required_, but it is recommended that you do so and define at least the recommended models as described in the [Configuration section below](#configuration).
 
 1.  In the store app's `models.py` import the necessary classes and create the `Product` model from the `Reviewable` base class:
@@ -141,7 +141,7 @@ You can configure django-reviews in your django settings. Create a `DJANGO_REVIE
 | `COMMENT_REQUIRED`           | `False` | If `True`, `Review.comment` [`TextField`](https://docs.djangoproject.com/en/1.7/ref/models/fields/#textfield) will be required. |
 | `COMMENT_APPROVAL_REQUIRED`  | `False` | If `True`, `Review.comment_approved` will be `False` by default. You could use this to render a review without its comment until a staff member has approved the comment. |
 
-> **Note**
+> **Note**<br>
 > Other configuration could easily be done by subclassing either `reviews.models.Review` or `reviews.models.Reviewable` before using them.
 
 
