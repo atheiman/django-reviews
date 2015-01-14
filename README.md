@@ -152,7 +152,13 @@ The `Review` model is not all that complex. To see all available fields for the 
 
 
 
-## Testing
+## Development
+
+I use a kanban board provided by waffle.io for free to manage GitHub issues for this project. It is available [here](https://waffle.io/atheiman/django-reviews).
+
+In the package there is a `simple-project` that contains a `store` application as an example use-case for django-reviews. Use this for testing an admin interface, templating, and similar things.
+
+There is also a `tests` dir. I use [the process the Django docs describe for testing a reusable application](https://docs.djangoproject.com/en/1.7/topics/testing/advanced/#using-the-django-test-runner-to-test-reusable-applications). Simply execute the `runtests.py` script to execute the tests:
 
 ```shell
 $ ./runtests.py
