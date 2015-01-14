@@ -154,7 +154,7 @@ The `Review` model is not all that complex. To see all available fields for the 
 
 ## Development
 
-I use a kanban board provided by waffle.io for free to manage GitHub issues for this project. It is available [here](https://waffle.io/atheiman/django-reviews).
+I use a kanban board created by the [zenhub](https://www.zenhub.io/) Chrome extension for free to manage GitHub issues for this project. If you have any thoughts on the project, simply create an issue.
 
 In the package there is a `simple-project` that contains a `store` application as an example use-case for django-reviews. Use this for testing an admin interface, templating, and similar things.
 
