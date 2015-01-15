@@ -15,30 +15,47 @@ class Review(models.Model):
         limit = reduce(operator.or_, (models.Q(**condition) for condition in REVIEWABLE_MODELS))
     else:
         limit = None
-    content_type = models.ForeignKey(ContentType, limit_choices_to=limit)
+    content_type = models.ForeignKey(
+        ContentType,
+        limit_choices_to=limit,
+        help_text="Reviewed model",
+    )
     object_id = models.PositiveIntegerField()
-    reviewed_object = GenericForeignKey('content_type', 'object_id')
+    reviewed_object = GenericForeignKey(
+        'content_type',
+        'object_id',
+    )
 
-    user = models.ForeignKey(User, related_name='reviews')
+    user = models.ForeignKey(
+        User,
+        related_name='reviews',
+        help_text="User that submitted the review",
+    )
     score = models.PositiveSmallIntegerField(
         choices=SCORE_CHOICES,
+        help_text="Integer score in a range from %d through %d" % (MIN_SCORE, MAX_SCORE),
     )
     comment = models.TextField(
         max_length=MAX_COMMENT_LENGTH,
         blank=not COMMENT_REQUIRED,
+        help_text="A comment explaining the score for the review",
     )
     anonymous = models.BooleanField(
         default=False,
+        help_text="Keep the reviewer identity anonymous",
     )
     comment_approved = models.BooleanField(
         default=not COMMENT_APPROVAL_REQUIRED,
+        help_text="The comment has been approved by an admin",
     )
 
     created = models.DateTimeField(
         auto_now_add=True,
+        help_text="Date and time created",
     )
     updated = models.DateTimeField(
         auto_now=True,
+        help_text="Date and time last updated",
     )
 
     def is_updated(self):
