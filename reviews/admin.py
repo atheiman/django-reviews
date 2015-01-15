@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
+from django.utils import formats
 
 from .models import Review
 from .utils import get_reviewable_model_classes
@@ -17,7 +18,8 @@ def reviewed_model_linked(obj):
             model_name=obj.content_type.model,
         )
     )
-    return "<a href='%s'>%s</a>" % (url, obj.content_type.name.title())
+    return "{text} (<a href='{url}'>link</a>)".format(text=obj.content_type.name.title(),
+                                                      url=url)
 reviewed_model_linked.allow_tags = True
 reviewed_model_linked.short_description = "Reviewed model"
 
@@ -34,9 +36,28 @@ def reviewed_object_linked(obj):
         ),
         args=(obj.reviewed_object.id,)
     )
-    return "<a href='%s'>%s</a>" % (url, obj.reviewed_object)
+    return "{text} (<a href='{url}'>link</a>)".format(text=obj.reviewed_object,
+                                                      url=url)
 reviewed_object_linked.allow_tags = True
 reviewed_object_linked.short_description = "Reviewed object"
+
+
+
+def review_user_linked(obj):
+    """Return a direct link to the reviewer admin.
+
+    obj is a Review object."""
+    url = reverse(
+        'admin:{app_label}_{model_name}_change'.format(
+            app_label=ContentType.objects.get_for_model(obj.user.__class__).app_label,
+            model_name=ContentType.objects.get_for_model(obj.user.__class__).model,
+        ),
+        # ContentType.objects.get_for_model(user.__class__).app_label
+        args=(obj.user.id,)
+    )
+    return "{text} (<a href='{url}'>link</a>)".format(text=obj.user,url=url)
+review_user_linked.allow_tags = True
+review_user_linked.short_description = "Reviewer"
 
 
 
@@ -80,7 +101,7 @@ class ReviewAdmin(admin.ModelAdmin):
         'id',
         reviewed_model_linked,
         reviewed_object_linked,
-        'user',
+        review_user_linked,
         'score',
         'comment',
         'comment_approved',
@@ -93,10 +114,10 @@ class ReviewAdmin(admin.ModelAdmin):
     readonly_fields = [
         reviewed_model_linked,
         reviewed_object_linked,
-        'user',
+        review_user_linked,
         'score',
         'created',
-        'is_updated',
+        'updated',
     ]
     fields = readonly_fields + [
         'comment',
