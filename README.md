@@ -1,6 +1,8 @@
+[![Stories in Ready](https://badge.waffle.io/atheiman/django-reviews.png?label=ready&title=Ready)](http://waffle.io/atheiman/django-reviews)
+
 # django-reviews
 
-A simple to use framework for user submitted reviews of objects.
+A simple to use app and framework for user submitted reviews of objects by utilizing `django.contrib.contenttypes.
 
 
 
