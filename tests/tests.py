@@ -80,13 +80,16 @@ class ModelsTestCase(TestCase):
         self.assertFalse(r_1.is_updated())
 
         time.sleep(
-            settings.DJANGO_REVIEWS.get('UPDATED_COMPARISON_SECONDS') + 1
+            settings.DJANGO_REVIEWS.get('UPDATED_COMPARISON_SECONDS') + .01
         )
 
         r_1.score += 1
         r_1.save()
 
+        time.sleep(.01)
+
         self.assertIsInstance(r_1.is_updated(), datetime.datetime)
+        self.assertTrue(datetime.datetime.now() > r_1.is_updated())
 
     def test_review_comment_approved(self):
         u_1 = UserFactory()
