@@ -62,7 +62,7 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
 
 ## Basic Model Usage
 
-Create reviews with `Review.objects.create()`:
+### Create reviews with `Review.objects.create()`:
 
 ```python
 >>> from reviews.models import Review
@@ -79,7 +79,7 @@ Create reviews with `Review.objects.create()`:
 ... )
 ```
 
-Simple lookups across the relationships:
+### Simple lookups across the relationships:
 
 ```python
 >>> user.reviews.all()
@@ -88,7 +88,7 @@ Simple lookups across the relationships:
 [<Review: object: 22-inch TV, score: 3, user: joetest>]
 ```
 
-Reverse lookups from the `Review` table as well:
+### Reverse lookups from the `Review` table as well:
 
 ```python
 >>> Review.objects.filter(products__name__contains='tv')
@@ -97,7 +97,7 @@ Reverse lookups from the `Review` table as well:
 [<Review: object: 22-inch TV, score: 3, user: joetest>]
 ```
 
-Extra functions built into `Reviewable` abstract base model:
+### Extra functions built into `Reviewable` abstract base model:
 
 ```python
 >>> user_2 = User.objects.create_user(username='atheiman')
@@ -111,7 +111,7 @@ Extra functions built into `Reviewable` abstract base model:
 Decimal('3.5')
 ```
 
-Functionality available in `Review`:
+### Functionality available in `Review`:
 
 ```python
 >>> review.is_updated()    # returns False if no updates
@@ -121,6 +121,23 @@ False
 >>> review.save()
 >>> review.is_updated()    # returns updated datetime if updated
 datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
+```
+
+### Render `Review` objects in a template easily:
+
+```python
+>>> review = Review.objects.create(
+...     user=User.objects.create_user(username='austin'),
+...     reviewed_object=Product.objects.create(name="Cool Lamp"),
+...     score=4,
+...     comment="The shade on this lamp is nice.",
+... )
+>>> review.as_p()    # render the review with <p> html tags
+"<p class='review-user'>austin</p><p class='review-datetime'>Reviewed Jan. 15, 2015, 6:09 a.m.</p><p class='review-score'>4</p><blockquote class='review-comment'>The shade on this lamp is nice.</blockquote>"
+>>> # This time render with div tags, a specified comment tag,
+>>> # and a custom DATETIME_FORMAT I defined in settings.REVIEWS_DATETIME_FORMAT
+>>> review.as_div(comment_html_tag="p", datetime_format='REVIEWS_DATETIME_FORMAT')
+"<div class='review-user'>austin</div><div class='review-datetime'>Reviewed 2015 - Jan. 15</div><div class='review-score'>4</div><p class='review-comment'>The shade on this lamp is nice.</p>"
 ```
 
 

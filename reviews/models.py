@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.utils import formats
 
 from .defaults import *
 
@@ -76,6 +77,54 @@ class Review(models.Model):
             self.comment_approved = True
 
         super(Review, self).save(*args, **kwargs)
+
+    def _html(self, tag, comment_html_tag='blockquote', datetime_format='DATETIME_FORMAT'):
+        """Return an html string with review fields wrapped in the provided tag.
+
+        comment_html_tag is the html tag used to wrap the review comment.
+
+        datetime_format is used to output review.created or review.updated. To overide, define an alternative to DATETIME_FORMAT in the settings and pass the string name of the setting here. Or simply override DATETIME_FORMAT everywhere in a project by changing its value in the settings.
+        Also available by default for use in this arg is DATE_FORMAT, TIME_FORMAT, or SHORT_DATE_FORMAT, although they will obviously limit the output to only DATE or TIME.
+        documented here https://docs.djangoproject.com/en/1.7/ref/settings/#datetime-format
+
+        """
+        html = ""
+
+        user = self.user if not self.anonymous else "Anonymous"
+        html += "<{tag} class='review-user'>".format(tag=tag)
+        if user.get_absolute_url:
+            html += "<a href='{url}'>{user}</a></{tag}>".format(tag=tag,
+                                                                user=self.user,
+                                                                url=self.user.get_absolute_url())
+        else:
+            html += "{user}</{tag}>".format(tag=tag, user=self.user)
+
+        html += "<{tag} class='review-datetime'>".format(tag=tag)
+        if self.is_updated():
+            html += "Updated {datetime}".format(datetime=formats.date_format(
+                self.is_updated(),
+                datetime_format))
+        else:
+            html += "Reviewed {datetime}".format(datetime=formats.date_format(
+                self.created,
+                datetime_format))
+        html += "</{tag}>".format(tag=tag)
+
+        html += "<{tag} class='review-score'>{score}</{tag}>".format(tag=tag,
+                                                                     score=self.score)
+
+        if self.comment and self.comment_approved:
+            html += "<{tag} class='review-comment'>{comment}</{tag}>".format(
+                tag=comment_html_tag,
+                comment=self.comment)
+
+        return html
+
+    def as_p(self, **kwargs):
+        return self._html('p', **kwargs)
+
+    def as_div(self, **kwargs):
+        return self._html('div', **kwargs)
 
     # class Meta:
     #     unique_together = ("reviewed_object", "user")
