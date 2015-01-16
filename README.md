@@ -178,7 +178,7 @@ I use a kanban board created by the [zenhub](https://www.zenhub.io/) Chrome exte
 
 In the package there is a `simple-project` that contains a `store` application as an example use-case for django-reviews. Use this for testing an admin interface, templating, and similar things.
 
-There is also a `tests` dir. I use [the process the Django docs describe for testing a reusable application](https://docs.djangoproject.com/en/1.7/topics/testing/advanced/#using-the-django-test-runner-to-test-reusable-applications). Simply execute the `runtests.py` script to execute the tests:
+There is also a `tests` dir. I use[`factory_boy`](http://factoryboy.readthedocs.org/en/latest/) and [the process the Django docs describe for testing a reusable application](https://docs.djangoproject.com/en/1.7/topics/testing/advanced/#using-the-django-test-runner-to-test-reusable-applications) to test django-reviews. Simply execute the `runtests.py` script to execute the tests:
 
 ```shell
 $ ./runtests.py
