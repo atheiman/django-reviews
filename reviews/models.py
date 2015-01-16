@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.utils import formats
+from django.utils.html import format_html, mark_safe
 
 from .defaults import *
 
@@ -60,7 +61,9 @@ class Review(models.Model):
     )
 
     def is_updated(self):
-        """Return false if review not updated, otherwise return datetime of update."""
+        """
+        Return false if review not updated, otherwise return datetime of update.
+        """
         if self.updated - self.created > datetime.timedelta(0, UPDATED_COMPARISON_SECONDS):
             # updated datetime is within 10 sec of created datetime
             return self.updated
@@ -79,52 +82,66 @@ class Review(models.Model):
         super(Review, self).save(*args, **kwargs)
 
     def _html(self, tag, comment_html_tag='blockquote', datetime_format='DATETIME_FORMAT'):
-        """Return an html string with review fields wrapped in the provided tag.
+        """
+        Return an html string with review fields wrapped in the provided tag.
 
         comment_html_tag is the html tag used to wrap the review comment.
 
         datetime_format is used to output review.created or review.updated. To overide, define an alternative to DATETIME_FORMAT in the settings and pass the string name of the setting here. Or simply override DATETIME_FORMAT everywhere in a project by changing its value in the settings.
         Also available by default for use in this arg is DATE_FORMAT, TIME_FORMAT, or SHORT_DATE_FORMAT, although they will obviously limit the output to only DATE or TIME.
         documented here https://docs.djangoproject.com/en/1.7/ref/settings/#datetime-format
-
         """
-        html = ""
+        element_list = []
 
         user = self.user if not self.anonymous else "Anonymous"
-        html += "<{tag} class='review-user'>".format(tag=tag)
-        if user.get_absolute_url:
-            html += "<a href='{url}'>{user}</a></{tag}>".format(tag=tag,
-                                                                user=self.user,
-                                                                url=self.user.get_absolute_url())
+        element = format_html("<{tag} class='review-user'>",tag=tag)
+        if hasattr(user, 'get_absolute_url'):
+            element += format_html("<a href='{url}'>{user}</a>",
+                                user=self.user,
+                                url=self.user.get_absolute_url(),)
         else:
-            html += "{user}</{tag}>".format(tag=tag, user=self.user)
+            element += format_html("{user}", user=self.user)
+        element += format_html("</{tag}>", tag=tag)
+        element_list.append(element)
 
-        html += "<{tag} class='review-datetime'>".format(tag=tag)
+        element = format_html("<{tag} class='review-datetime'>", tag=tag)
         if self.is_updated():
-            html += "Updated {datetime}".format(datetime=formats.date_format(
-                self.is_updated(),
-                datetime_format))
+            element += format_html("Updated {datetime}",
+                datetime=formats.date_format(
+                    self.is_updated(),
+                    datetime_format
+                )
+            )
         else:
-            html += "Reviewed {datetime}".format(datetime=formats.date_format(
-                self.created,
-                datetime_format))
-        html += "</{tag}>".format(tag=tag)
+            element += format_html("Reviewed {datetime}",
+                datetime=formats.date_format(
+                    self.created,
+                    datetime_format
+                )
+            )
+        element += format_html("</{tag}>", tag=tag)
+        element_list.append(element)
 
-        html += "<{tag} class='review-score'>{score}</{tag}>".format(tag=tag,
-                                                                     score=self.score)
+        element = format_html("<{tag} class='review-score'>{score}</{tag}>",
+                            tag=tag,
+                            score=self.score)
+        element_list.append(element)
 
         if self.comment and self.comment_approved:
-            html += "<{tag} class='review-comment'>{comment}</{tag}>".format(
-                tag=comment_html_tag,
-                comment=self.comment)
+            element = format_html("<{tag} class='review-comment'>{comment}</{tag}>",
+                                tag=comment_html_tag,
+                                comment=self.comment)
+            element_list.append(element)
 
-        return html
+        return "\n".join(element_list)
 
     def as_p(self, **kwargs):
-        return self._html('p', **kwargs)
+        return format_html(self._html('p', **kwargs))
+    as_p.allow_tags = True
 
     def as_div(self, **kwargs):
-        return self._html('div', **kwargs)
+        return format_html(self._html('div', **kwargs))
+    as_div.allow_tags = True
 
     # class Meta:
     #     unique_together = ("reviewed_object", "user")
@@ -132,7 +149,8 @@ class Review(models.Model):
 
 
 class Reviewable(models.Model):
-    """Generic reviewable model to be subclassed.
+    """
+    Generic reviewable model to be subclassed.
 
     To be deprecated in favor of reviews.decorators.reviewable.
     """

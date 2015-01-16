@@ -42,19 +42,20 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
     > **Note**<br>
     > Defining the `DJANGO_REVIEWS` dict for configuration is not _required_, but it is recommended that you do so and define at least the recommended models as described in the [Configuration section below](#configuration).
 
-1.  In the store app's `models.py` import the necessary classes and create the `Product` model from the `Reviewable` base class:
+1.  In the store app's `models.py` import the necessary classes and create the `Product` model using the `reviewable` decorator:
 
     ```python
     from django.db import models
     from django.contrib.contenttypes.fields import GenericRelation
     from reviews.models import Review, Reviewable
 
-    class Product(Reviewable):
-        name = models.CharField(max_length=40)
+    @reviewable
+    class Product(models.Model):
+        name = models.CharField(max_length=40, unique=True)
 
         # ...
 
-        reviews = GenericRelation(Review, related_query_name="products")
+        reviews = GenericRelation(Review, related_query_name="product")
 
         def __unicode__(self):
             return self.name
@@ -128,18 +129,19 @@ datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
 ### Render `Review` objects in a template easily:
 
 ```python
->>> review = Review.objects.create(
-...     user=User.objects.create_user(username='austin'),
-...     reviewed_object=Product.objects.create(name="Cool Lamp"),
-...     score=4,
-...     comment="The shade on this lamp is nice.",
-... )
->>> review.as_p()    # render the review with <p> html tags
-"<p class='review-user'>austin</p><p class='review-datetime'>Reviewed Jan. 15, 2015, 6:09 a.m.</p><p class='review-score'>4</p><blockquote class='review-comment'>The shade on this lamp is nice.</blockquote>"
->>> # This time render with div tags, a specified comment tag,
->>> # and a custom DATETIME_FORMAT I defined in settings.REVIEWS_DATETIME_FORMAT
->>> review.as_div(comment_html_tag="p", datetime_format='REVIEWS_DATETIME_FORMAT')
-"<div class='review-user'>austin</div><div class='review-datetime'>Reviewed 2015 - Jan. 15</div><div class='review-score'>4</div><p class='review-comment'>The shade on this lamp is nice.</p>"
+>>> from django.template import Template, Context
+>>> review = Review.objects.create(user=User.objects.all()[0], reviewed_object=Product.objects.create(name="Knitted Scarf"), score=2)
+>>> print Template("{{ review.as_p }}").render(Context({'review':review}))
+<p class='review-user'>joetest</p>
+<p class='review-datetime'>Reviewed Jan. 16, 2015, 4:43 a.m.</p>
+<p class='review-score'>2</p>
+>>> review.comment = "<script>Prevented XSS Attacks</script>"
+>>> review.save()
+>>> print Template("{{ review.as_div }}").render(Context({'review':review}))
+<div class='review-user'>joetest</div>
+<div class='review-datetime'>Updated Jan. 16, 2015, 4:44 a.m.</div>
+<div class='review-score'>2</div>
+<blockquote class='review-comment'>&lt;script&gt;Prevented XSS Attacks&lt;/script&gt;</blockquote>
 ```
 
 
