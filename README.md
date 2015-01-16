@@ -8,15 +8,17 @@ A simple to use app and framework for user submitted reviews of objects utilizin
 
 ## Getting Started
 
-Imagine the use case of a web store. Users (`django.contrib.auth.User`) can submit reviews for Products (`store.models.Product`), making `Product` the subclass of `reviews.models.Reviewable`. Here's how to create a simple store application using the django-reviews framework.
+Imagine the use case of a web store. Users (`django.contrib.auth.User`) can submit reviews for Products (`store.models.Product`). Here's how to create a simple store application using the django-reviews framework.
 
 1.  Install django-reviews from GitHub using pip:
 
-    `pip install git+ssh://git@github.com/atheiman/django-reviews.git@1.0.0#egg=reviews`
+    `pip install git+ssh://git@github.com/atheiman/django-reviews.git@master#egg=reviews`
 
 1.  Add `reviews` to `INSTALLED_APPS` in your settings file. Be sure [`django.contrib.auth`](https://docs.djangoproject.com/en/1.7/ref/contrib/auth/) and [`django.contrib.contenttypes`](https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/) are there too (in a default django project creation, they should be there).
 
     ```python
+    # settings.py
+
     INSTALLED_APPS = (
         # ...
         'django.contrib.auth',
@@ -30,6 +32,8 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
 1.  Also in your settings file, create an empty `DJANGO_REVIEWS` dictionary. This dictionary will be used to configure django-reviews. Lets go ahead and add one key to the dictionary, `REVIEWABLE_MODELS`. The `REVIEWABLE_MODELS` key is used to register models that you want to define as reviewable. It accepts an iterable of dictionary elements containing 2 required keys:
 
     ```python
+    # settings.py
+
     DJANGO_REVIEWS = {}
     DJANGO_REVIEWS['REVIEWABLE_MODELS'] = [
         {
@@ -42,12 +46,15 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
     > **Note**<br>
     > Defining the `DJANGO_REVIEWS` dict for configuration is not _required_, but it is recommended that you do so and define at least the recommended settings keys as described in the [Configuration section below](#configuration).
 
-1.  In the store app's `models.py` import the necessary classes and create the `Product` model using the `reviewable` decorator:
+1.  In the store app's `models.py` import the necessary objects and create the `Product` model using the `reviewable` decorator:
 
     ```python
+    # store/models.py
+
     from django.db import models
     from django.contrib.contenttypes.fields import GenericRelation
-    from reviews.models import Review, Reviewable
+    from reviews.models import Review
+    from reviews.decorators import reviewable
 
     @reviewable
     class Product(models.Model):
@@ -70,7 +77,7 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
 ```python
 >>> from reviews.models import Review
 >>> from django.contrib.auth.models import User
->>> from simple_app.models import Product
+>>> from store.models import Product
 >>>
 >>> user = User.objects.create_user(username='joetest')
 >>> product = Product.objects.create(name='22-inch TV')
@@ -148,7 +155,7 @@ datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
 
 ## Configuration
 
-You can configure django-reviews in your django settings. Create a `DJANGO_REVIEWS` dictionary in your settings file, and add settings keys and values as you like. Generally the defaults are created from how [Amazon.com](http://www.amazon.com/) implements reviews. Below are all the available settings keys, their defaults, and a brief explanation.
+You can configure django-reviews in your django settings. Create a `DJANGO_REVIEWS` dictionary in your settings file, and add settings keys and values as you like. Generally, the defaults are created from how [Amazon.com](http://www.amazon.com/) implements reviews. Below are all the available settings keys, their defaults, and a brief explanation.
 
 | Setting Key                  | Default | Notes                                            |
 | :--------------------------- | :------ | :----------------------------------------------- |
