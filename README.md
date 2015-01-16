@@ -65,7 +65,7 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
 
 ## Basic Model Usage
 
-#### Create reviews with `Review.objects.create()`:
+##### Create reviews with `Review.objects.create()`:
 
 ```python
 >>> from reviews.models import Review
@@ -82,7 +82,7 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
 ... )
 ```
 
-#### Simple lookups across the relationships:
+##### Simple lookups across the relationships:
 
 ```python
 >>> user.reviews.all()
@@ -91,7 +91,7 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
 [<Review: object: 22-inch TV, score: 3, user: joetest>]
 ```
 
-#### Reverse lookups from the `Review` table as well:
+##### Reverse lookups from the `Review` table as well:
 
 ```python
 >>> Review.objects.filter(products__name__contains='tv')
@@ -100,7 +100,7 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
 [<Review: object: 22-inch TV, score: 3, user: joetest>]
 ```
 
-#### Extra functions built into `Reviewable` abstract base model:
+##### Extra functions built into `Reviewable` abstract base model:
 
 ```python
 >>> user_2 = User.objects.create_user(username='atheiman')
@@ -114,7 +114,7 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
 Decimal('3.5')
 ```
 
-#### Functionality available in `Review`:
+##### Functionality available in `Review`:
 
 ```python
 >>> review.is_updated()    # returns False if no updates
@@ -126,7 +126,7 @@ False
 datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
 ```
 
-#### Render `Review` objects in a template easily:
+##### Render `Review` objects in a template easily:
 
 ```python
 >>> from django.template import Template, Context
