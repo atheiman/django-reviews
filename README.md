@@ -40,7 +40,7 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
     ```
 
     > **Note**<br>
-    > Defining the `DJANGO_REVIEWS` dict for configuration is not _required_, but it is recommended that you do so and define at least the recommended models as described in the [Configuration section below](#configuration).
+    > Defining the `DJANGO_REVIEWS` dict for configuration is not _required_, but it is recommended that you do so and define at least the recommended settings keys as described in the [Configuration section below](#configuration).
 
 1.  In the store app's `models.py` import the necessary classes and create the `Product` model using the `reviewable` decorator:
 
@@ -148,7 +148,7 @@ datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
 
 ## Configuration
 
-You can configure django-reviews in your django settings. Create a `DJANGO_REVIEWS` dictionary in your settings file, and add settings keys and values as you prefer. Generally the defaults are created from how [Amazon.com](http://www.amazon.com/) implements reviews. Below are all the available settings, their defaults, and a brief explanation.
+You can configure django-reviews in your django settings. Create a `DJANGO_REVIEWS` dictionary in your settings file, and add settings keys and values as you like. Generally the defaults are created from how [Amazon.com](http://www.amazon.com/) implements reviews. Below are all the available settings keys, their defaults, and a brief explanation.
 
 | Setting Key                  | Default | Notes                                            |
 | :--------------------------- | :------ | :----------------------------------------------- |
@@ -157,13 +157,10 @@ You can configure django-reviews in your django settings. Create a `DJANGO_REVIE
 | `MIN_SCORE`                  | `1`     | Minimum value of `Review.score`.                 |
 | `SCORE_CHOICES`              | `zip(range(MIN_SCORE, MAX_SCORE + 1),range(MIN_SCORE, MAX_SCORE + 1))` | List of tuple pairs to be used as a [`choices`](https://docs.djangoproject.com/en/1.7/ref/models/fields/#choices) list of acceptable `Review.score` values. The default evaluates to `[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)]` (accepts user input of integers between 1 and 5) if `MIN_SCORE` and `MAX_SCORE` have not been changed. Otherwise it will generate a list of choices as integers from `MIN_SCORE` to `MAX_SCORE`. |
 | `MAX_COMMENT_LENGTH`         | `1000`  | Maximum length of `Review.comment` [`TextField`](https://docs.djangoproject.com/en/1.7/ref/models/fields/#textfield). |
-| `UPDATED_COMPARISON_SECONDS` | `10`    | Number of seconds required to pass before changes to any `Review` fields cause `Review.is_updated()` to return the `Review.update` `datetime` instance. If the number of seconds has not passed, the `Review.is_updated()` method returns `False`. |
+| `UPDATED_COMPARISON_SECONDS` | `10`    | Number of seconds required to pass before changes to any `Review` fields cause `Review.is_updated()` to return `Review.update` rather than `False`. |
 | `AVG_SCORE_DIGITS`           | `2`     | Number of digits in the [`Decimal`](https://docs.python.org/2/library/decimal.html) instance returned by `Review.avg_review_score()`. |
 | `COMMENT_REQUIRED`           | `False` | If `True`, `Review.comment` [`TextField`](https://docs.djangoproject.com/en/1.7/ref/models/fields/#textfield) will be required. |
 | `COMMENT_APPROVAL_REQUIRED`  | `False` | If `True`, `Review.comment_approved` will be `False` by default. You could use this to render a review without its comment until a staff member has approved the comment. |
-
-> **Note**<br>
-> Other configuration could easily be done by subclassing either `reviews.models.Review` or `reviews.models.Reviewable` before using them.
 
 
 
@@ -175,6 +172,8 @@ The `Review` model is not all that complex. To see all available fields for the 
 
 ## Development
 
+Contributions are welcome! If you have an idea, [create an issue](./issues/new). Or better yet, [submit a pull request](./pulls).
+
 I use a kanban board created by the [zenhub](https://www.zenhub.io/) Chrome extension for free to manage GitHub issues for this project. If you have any thoughts on the project, simply create an issue.
 
 In the package there is a `simple-project` that contains a `store` application as an example use-case for django-reviews. Use this for testing an admin interface, templating, and similar things.
@@ -184,3 +183,5 @@ There is also a `tests` dir. I use [the process the Django docs describe for tes
 ```shell
 $ ./runtests.py
 ```
+
+This package is tested against Django 1.7 and Python 2.7.
