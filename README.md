@@ -172,7 +172,7 @@ The `Review` model is not all that complex. To see all available fields for the 
 
 ## Development
 
-Contributions are welcome! If you have an idea, [create an issue](./issues/new). Or better yet, [submit a pull request](./pulls).
+Contributions are welcome! If you have an idea, [create an issue](https://github.com/atheiman/django-reviews/issues/new). Or better yet, [submit a pull request](https://github.com/atheiman/django-reviews/pulls).
 
 I use a kanban board created by the [zenhub](https://www.zenhub.io/) Chrome extension for free to manage GitHub issues for this project. If you have any thoughts on the project, simply create an issue.
 
