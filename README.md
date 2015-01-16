@@ -1,6 +1,8 @@
+[![Stories in Ready](https://badge.waffle.io/atheiman/django-reviews.png?label=ready&title=Ready)](http://waffle.io/atheiman/django-reviews)
+
 # django-reviews
 
-A simple to use framework for user submitted reviews of objects.
+A simple to use app and framework for user submitted reviews of objects by utilizing `django.contrib.contenttypes.
 
 
 
@@ -40,19 +42,20 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
     > **Note**<br>
     > Defining the `DJANGO_REVIEWS` dict for configuration is not _required_, but it is recommended that you do so and define at least the recommended models as described in the [Configuration section below](#configuration).
 
-1.  In the store app's `models.py` import the necessary classes and create the `Product` model from the `Reviewable` base class:
+1.  In the store app's `models.py` import the necessary classes and create the `Product` model using the `reviewable` decorator:
 
     ```python
     from django.db import models
     from django.contrib.contenttypes.fields import GenericRelation
     from reviews.models import Review, Reviewable
 
-    class Product(Reviewable):
-        name = models.CharField(max_length=40)
+    @reviewable
+    class Product(models.Model):
+        name = models.CharField(max_length=40, unique=True)
 
         # ...
 
-        reviews = GenericRelation(Review, related_query_name="products")
+        reviews = GenericRelation(Review, related_query_name="product")
 
         def __unicode__(self):
             return self.name
@@ -62,7 +65,7 @@ Imagine the use case of a web store. Users (`django.contrib.auth.User`) can subm
 
 ## Basic Model Usage
 
-Create reviews with `Review.objects.create()`:
+### Create reviews with `Review.objects.create()`:
 
 ```python
 >>> from reviews.models import Review
@@ -79,7 +82,7 @@ Create reviews with `Review.objects.create()`:
 ... )
 ```
 
-Simple lookups across the relationships:
+### Simple lookups across the relationships:
 
 ```python
 >>> user.reviews.all()
@@ -88,7 +91,7 @@ Simple lookups across the relationships:
 [<Review: object: 22-inch TV, score: 3, user: joetest>]
 ```
 
-Reverse lookups from the `Review` table as well:
+### Reverse lookups from the `Review` table as well:
 
 ```python
 >>> Review.objects.filter(products__name__contains='tv')
@@ -97,7 +100,7 @@ Reverse lookups from the `Review` table as well:
 [<Review: object: 22-inch TV, score: 3, user: joetest>]
 ```
 
-Extra functions built into `Reviewable` abstract base model:
+### Extra functions built into `Reviewable` abstract base model:
 
 ```python
 >>> user_2 = User.objects.create_user(username='atheiman')
@@ -111,7 +114,7 @@ Extra functions built into `Reviewable` abstract base model:
 Decimal('3.5')
 ```
 
-Functionality available in `Review`:
+### Functionality available in `Review`:
 
 ```python
 >>> review.is_updated()    # returns False if no updates
@@ -121,6 +124,24 @@ False
 >>> review.save()
 >>> review.is_updated()    # returns updated datetime if updated
 datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
+```
+
+### Render `Review` objects in a template easily:
+
+```python
+>>> from django.template import Template, Context
+>>> review = Review.objects.create(user=User.objects.all()[0], reviewed_object=Product.objects.create(name="Knitted Scarf"), score=2)
+>>> print Template("{{ review.as_p }}").render(Context({'review':review}))
+<p class='review-user'>joetest</p>
+<p class='review-datetime'>Reviewed Jan. 16, 2015, 4:43 a.m.</p>
+<p class='review-score'>2</p>
+>>> review.comment = "<script>Prevented XSS Attacks</script>"
+>>> review.save()
+>>> print Template("{{ review.as_div }}").render(Context({'review':review}))
+<div class='review-user'>joetest</div>
+<div class='review-datetime'>Updated Jan. 16, 2015, 4:44 a.m.</div>
+<div class='review-score'>2</div>
+<blockquote class='review-comment'>&lt;script&gt;Prevented XSS Attacks&lt;/script&gt;</blockquote>
 ```
 
 

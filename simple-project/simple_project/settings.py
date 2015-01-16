@@ -92,3 +92,4 @@ DJANGO_REVIEWS['REVIEWABLE_MODELS'] = [
         'model': 'product',
     },
 ]
+REVIEWS_DATETIME_FORMAT = "Y - N j"
