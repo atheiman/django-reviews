@@ -2,7 +2,7 @@
 
 # django-reviews
 
-A simple to use app and framework for user submitted reviews of objects by utilizing `django.contrib.contenttypes.
+A simple to use app and framework for user submitted reviews of objects utilizing `django.contrib.contenttypes`.
 
 
 
