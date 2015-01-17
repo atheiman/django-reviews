@@ -55,18 +55,18 @@ class Review(models.Model):
         auto_now_add=True,
         help_text="Date and time created",
     )
-    updated = models.DateTimeField(
+    modified = models.DateTimeField(
         auto_now=True,
-        help_text="Date and time last updated",
+        help_text="Date and time last modified",
     )
 
     def is_updated(self):
         """
-        Return false if review not updated, otherwise return datetime of update.
+        Return false if review not modified, otherwise return datetime of update.
         """
-        if self.updated - self.created > datetime.timedelta(0, UPDATED_COMPARISON_SECONDS):
-            # updated datetime is within 10 sec of created datetime
-            return self.updated
+        if self.modified - self.created > datetime.timedelta(0, UPDATED_COMPARISON_SECONDS):
+            # modified datetime is within 10 sec of created datetime
+            return self.modified
         else:
             return False
 
@@ -87,7 +87,7 @@ class Review(models.Model):
 
         comment_html_tag is the html tag used to wrap the review comment.
 
-        datetime_format is used to output review.created or review.updated. To overide, define an alternative to DATETIME_FORMAT in the settings and pass the string name of the setting here. Or simply override DATETIME_FORMAT everywhere in a project by changing its value in the settings.
+        datetime_format is used to output review.created or review.modified. To overide, define an alternative to DATETIME_FORMAT in the settings and pass the string name of the setting here. Or simply override DATETIME_FORMAT everywhere in a project by changing its value in the settings.
         Also available by default for use in this arg is DATE_FORMAT, TIME_FORMAT, or SHORT_DATE_FORMAT, although they will obviously limit the output to only DATE or TIME.
         documented here https://docs.djangoproject.com/en/1.7/ref/settings/#datetime-format
         """
@@ -108,7 +108,7 @@ class Review(models.Model):
         if self.is_updated():
             element += format_html("Updated {datetime}",
                 datetime=formats.date_format(
-                    self.is_updated(),
+                    self.modified,
                     datetime_format
                 )
             )

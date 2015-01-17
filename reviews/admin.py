@@ -117,11 +117,32 @@ class ReviewAdmin(admin.ModelAdmin):
         review_user_linked,
         'score',
         'created',
-        'updated',
+        'modified',
     ]
     fields = readonly_fields + [
         'comment',
         'anonymous',
         'comment_approved',
     ]
+
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Use special form during user creation
+        """
+        defaults = {}
+        if obj is None:
+            defaults.update({
+                'fields': [
+                    'content_type',
+                    'object_id',
+                    'user',
+                    'score',
+                    'comment',
+                    'anonymous',
+                    'comment_approved',
+                ],
+            })
+        defaults.update(kwargs)
+        return super(ReviewAdmin, self).get_form(request, obj, **defaults)
+
 admin.site.register(Review, ReviewAdmin)

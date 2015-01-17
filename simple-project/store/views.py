@@ -6,6 +6,9 @@ from .models import Product
 
 
 
-def template_test(request):
-    review = Review.objects.all()[0]
+def template_test(request, review_id=None):
+    if review_id:
+        review = Review.objects.get(pk=review_id)
+    else:
+        review = Review.objects.all()[0]
     return render(request, 'store/template_test.html', {'review':review})
