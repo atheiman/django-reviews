@@ -3,7 +3,7 @@ from decimal import *
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils import formats
 from django.utils.html import format_html, mark_safe
@@ -20,9 +20,11 @@ class Review(models.Model):
     content_type = models.ForeignKey(
         ContentType,
         limit_choices_to=limit,
-        help_text="Reviewed model",
+        help_text="Reviewed object model",
     )
-    object_id = models.PositiveIntegerField()
+    object_id = models.PositiveIntegerField(
+        help_text="Reviewed object ID",
+    )
     reviewed_object = GenericForeignKey(
         'content_type',
         'object_id',
@@ -55,18 +57,18 @@ class Review(models.Model):
         auto_now_add=True,
         help_text="Date and time created",
     )
-    updated = models.DateTimeField(
+    modified = models.DateTimeField(
         auto_now=True,
-        help_text="Date and time last updated",
+        help_text="Date and time last modified",
     )
 
     def is_updated(self):
         """
-        Return false if review not updated, otherwise return datetime of update.
+        Return false if review not modified, otherwise return datetime of update.
         """
-        if self.updated - self.created > datetime.timedelta(0, UPDATED_COMPARISON_SECONDS):
-            # updated datetime is within 10 sec of created datetime
-            return self.updated
+        if self.modified - self.created > datetime.timedelta(0, UPDATED_COMPARISON_SECONDS):
+            # modified datetime is within 10 sec of created datetime
+            return self.modified
         else:
             return False
 
@@ -87,7 +89,7 @@ class Review(models.Model):
 
         comment_html_tag is the html tag used to wrap the review comment.
 
-        datetime_format is used to output review.created or review.updated. To overide, define an alternative to DATETIME_FORMAT in the settings and pass the string name of the setting here. Or simply override DATETIME_FORMAT everywhere in a project by changing its value in the settings.
+        datetime_format is used to output review.created or review.modified. To overide, define an alternative to DATETIME_FORMAT in the settings and pass the string name of the setting here. Or simply override DATETIME_FORMAT everywhere in a project by changing its value in the settings.
         Also available by default for use in this arg is DATE_FORMAT, TIME_FORMAT, or SHORT_DATE_FORMAT, although they will obviously limit the output to only DATE or TIME.
         documented here https://docs.djangoproject.com/en/1.7/ref/settings/#datetime-format
         """
@@ -108,7 +110,7 @@ class Review(models.Model):
         if self.is_updated():
             element += format_html("Updated {datetime}",
                 datetime=formats.date_format(
-                    self.is_updated(),
+                    self.modified,
                     datetime_format
                 )
             )
@@ -145,25 +147,3 @@ class Review(models.Model):
 
     # class Meta:
     #     unique_together = ("reviewed_object", "user")
-
-
-
-class Reviewable(models.Model):
-    """
-    Generic reviewable model to be subclassed.
-
-    To be deprecated in favor of reviews.decorators.reviewable.
-    """
-
-    def avg_review_score(self):
-        """Return None for no reviews, or 2 digit Decimal review score avg."""
-        if self.reviews.all().count() < 1:
-            return None
-        getcontext().prec = AVG_SCORE_DIGITS
-        avg_review_score = Decimal()
-        for review in self.reviews.all():
-            avg_review_score += review.score
-        return avg_review_score / self.reviews.count()
-
-    class Meta:
-        abstract = True

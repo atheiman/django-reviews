@@ -129,7 +129,7 @@ False
 >>> review.score = 1
 >>> review.comment = "After using the tv for more than 10 seconds, it broke."
 >>> review.save()
->>> review.is_updated()    # returns updated datetime if updated
+>>> review.is_updated()    # returns modified datetime if updated
 datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
 ```
 
@@ -150,6 +150,8 @@ datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
 <div class='review-score'>2</div>
 <blockquote class='review-comment'>&lt;script&gt;Prevented XSS Attacks&lt;/script&gt;</blockquote>
 ```
+
+The html output could easily be styled by selecting the css classes `review-user`, `review-datetime`, `review-score`, and `review-comment`.
 
 
 

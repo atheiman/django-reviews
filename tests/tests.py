@@ -44,7 +44,7 @@ class ModelsTestCase(TestCase):
         self.assertIn(p_2.reviews.all()[0], Review.objects.filter(product__name=p_2.name))
         self.assertFalse(Review.objects.filter(product=p_3).exists())
 
-    def test_reviewable(self):
+    def test_review_avg_review_score(self):
         """Test reviews.models.Reviewable.avg_review_score()."""
         p_1 = ProductFactory()
         p_2 = ProductFactory()
@@ -71,7 +71,7 @@ class ModelsTestCase(TestCase):
         self.assertEqual(p_2.avg_review_score(), Decimal(3.0))
         self.assertEqual(p_3.avg_review_score(), None)
 
-    def test_review_avg_review_score(self):
+    def test_review_is_updated(self):
         """Test reviews.models.Review.is_updated()."""
         u_1 = UserFactory()
         p_1 = ProductFactory()
@@ -90,6 +90,7 @@ class ModelsTestCase(TestCase):
 
         self.assertIsInstance(r_1.is_updated(), datetime.datetime)
         self.assertTrue(datetime.datetime.now() > r_1.is_updated())
+        self.assertEqual(r_1.modified, r_1.is_updated())
 
     def test_review_comment_approved(self):
         u_1 = UserFactory()
