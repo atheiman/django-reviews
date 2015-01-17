@@ -3,7 +3,7 @@ from decimal import *
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils import formats
 from django.utils.html import format_html, mark_safe
@@ -145,25 +145,3 @@ class Review(models.Model):
 
     # class Meta:
     #     unique_together = ("reviewed_object", "user")
-
-
-
-class Reviewable(models.Model):
-    """
-    Generic reviewable model to be subclassed.
-
-    To be deprecated in favor of reviews.decorators.reviewable.
-    """
-
-    def avg_review_score(self):
-        """Return None for no reviews, or 2 digit Decimal review score avg."""
-        if self.reviews.all().count() < 1:
-            return None
-        getcontext().prec = AVG_SCORE_DIGITS
-        avg_review_score = Decimal()
-        for review in self.reviews.all():
-            avg_review_score += review.score
-        return avg_review_score / self.reviews.count()
-
-    class Meta:
-        abstract = True
