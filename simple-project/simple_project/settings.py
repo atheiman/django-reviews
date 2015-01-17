@@ -93,3 +93,6 @@ DJANGO_REVIEWS['REVIEWABLE_MODELS'] = [
     },
 ]
 REVIEWS_DATETIME_FORMAT = "Y - N j"
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda u: "/users/%s/" % u.username,
+}
