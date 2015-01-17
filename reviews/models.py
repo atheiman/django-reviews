@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils import formats
-from django.utils.html import format_html, mark_safe
+from django.utils.html import format_html, mark_safe, linebreaks
 
 from .defaults import *
 
@@ -99,10 +99,10 @@ class Review(models.Model):
         element = format_html("<{tag} class='review-user'>",tag=tag)
         if hasattr(user, 'get_absolute_url'):
             element += format_html("<a href='{url}'>{user}</a>",
-                                user=self.user,
-                                url=self.user.get_absolute_url(),)
+                                   user=user,
+                                   url=self.user.get_absolute_url(),)
         else:
-            element += format_html("{user}", user=self.user)
+            element += format_html("{user}", user=user)
         element += format_html("</{tag}>", tag=tag)
         element_list.append(element)
 
@@ -125,14 +125,16 @@ class Review(models.Model):
         element_list.append(element)
 
         element = format_html("<{tag} class='review-score'>{score}</{tag}>",
-                            tag=tag,
-                            score=self.score)
+                              tag=tag,
+                              score=self.score)
         element_list.append(element)
 
         if self.comment and self.comment_approved:
-            element = format_html("<{tag} class='review-comment'>{comment}</{tag}>",
-                                tag=comment_html_tag,
-                                comment=self.comment)
+            element = linebreaks(
+                format_html("<{tag} class='review-comment'>{comment}</{tag}>",
+                            tag=comment_html_tag,
+                            comment=self.comment)
+            )
             element_list.append(element)
 
         return "\n".join(element_list)
@@ -145,5 +147,6 @@ class Review(models.Model):
         return format_html(self._html('div', **kwargs))
     as_div.allow_tags = True
 
-    # class Meta:
+    class Meta:
+        ordering = ("modified",)
     #     unique_together = ("reviewed_object", "user")

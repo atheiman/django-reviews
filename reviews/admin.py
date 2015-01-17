@@ -68,7 +68,7 @@ def truncated_comment(obj):
     """
     Return a truncated comment to limit the display in the admin.
     """
-    return truncatechars(obj.comment, 100)
+    return truncatechars(obj.comment, 50)
 truncated_comment.short_description = "Comment (truncated)"
 
 
@@ -108,7 +108,23 @@ class ReviewedModelListFilter(admin.SimpleListFilter):
 
 
 
+def make_anonymous(modeladmin, request, queryset):
+    queryset.update(anonymous=True)
+make_anonymous.short_description = "Mark selected reviews as anonymous"
+
+
+
+def make_comments_approved(modeladmin, request, queryset):
+    queryset.update(comment_approved=True)
+make_comments_approved.short_description = "Mark selected reviews comments as approved"
+
+
+
 class ReviewAdmin(admin.ModelAdmin):
+    actions = [
+        make_anonymous,
+        make_comments_approved,
+    ]
     list_display = [
         'id',
         reviewed_model_linked,
@@ -117,6 +133,7 @@ class ReviewAdmin(admin.ModelAdmin):
         'score',
         truncated_comment,
         'comment_approved',
+        'modified',
     ]
     list_filter = [
         ReviewedModelListFilter,

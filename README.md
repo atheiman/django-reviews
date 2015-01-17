@@ -151,7 +151,23 @@ datetime.datetime(2015, 1, 7, 19, 20, 15, 723908, tzinfo=<UTC>)
 <blockquote class='review-comment'>&lt;script&gt;Prevented XSS Attacks&lt;/script&gt;</blockquote>
 ```
 
-The html output could easily be styled by selecting the css classes `review-user`, `review-datetime`, `review-score`, and `review-comment`.
+The html output could easily be styled by selecting the css classes `review-user`, `review-datetime`, `review-score`, and `review-comment`. Here is an example `review.as_p` output styled with [Bootstrap](http://getbootstrap.com/):
+
+![review_as_p](https://cloud.githubusercontent.com/assets/5932099/5790717/6437a844-9e6b-11e4-94de-503fb044fc37.png)
+
+Note that comments are autoescaped to prevent XSS attacks, and comments are output in `<blockquote>` tag by default. The `as_p` and `as_div` methods accept optional arguments, the `comment_html_tag` argument is used to output the review-comment in a different tag. You could of course do this with css instead, by styling the `review-comment` class.
+
+
+
+## Review Admin
+
+django-reviews comes with an admin site. It can be disabled with the `ADMIN_ENABLED` settings key. Here are some screenshots of the admin:
+
+##### Review Admin Changelist
+![review_admin_changelist](https://cloud.githubusercontent.com/assets/5932099/5790714/5f9fc96a-9e6b-11e4-85da-a399713242a4.png)
+
+##### Review Admin Edit
+![review_admin_edit](https://cloud.githubusercontent.com/assets/5932099/5790716/642984f8-9e6b-11e4-8e8c-e76baa1715a0.png)
 
 
 
@@ -170,6 +186,7 @@ You can configure django-reviews in your django settings. Create a `DJANGO_REVIE
 | `AVG_SCORE_DIGITS`           | `2`     | Number of digits in the [`Decimal`](https://docs.python.org/2/library/decimal.html) instance returned by `Review.avg_review_score()`. |
 | `COMMENT_REQUIRED`           | `False` | If `True`, `Review.comment` [`TextField`](https://docs.djangoproject.com/en/1.7/ref/models/fields/#textfield) will be required. |
 | `COMMENT_APPROVAL_REQUIRED`  | `False` | If `True`, `Review.comment_approved` will be `False` by default. You could use this to render a review without its comment until a staff member has approved the comment. |
+| `ADMIN_COMMENT_TRUNCATE`     | 50      | Truncated length of comments on django-reviews admin changelist page. |
 
 
 
