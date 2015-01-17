@@ -20,9 +20,11 @@ class Review(models.Model):
     content_type = models.ForeignKey(
         ContentType,
         limit_choices_to=limit,
-        help_text="Reviewed model",
+        help_text="Reviewed object model",
     )
-    object_id = models.PositiveIntegerField()
+    object_id = models.PositiveIntegerField(
+        help_text="Reviewed object ID",
+    )
     reviewed_object = GenericForeignKey(
         'content_type',
         'object_id',
